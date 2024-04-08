@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="ShapeViewer.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:ShapeViewer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <SwapChainPanel
+        x:Name="swapChainPanel"
+        Loaded="swapChainPanel_Loaded"
+        PointerMoved="swapChainPanel_PointerMoved"
+        PointerPressed="swapChainPanel_PointerPressed"
+        PointerReleased="swapChainPanel_PointerReleased"
+        SizeChanged="swapChainPanel_SizeChanged"
+        Unloaded="swapChainPanel_Unloaded" />
+</Window>

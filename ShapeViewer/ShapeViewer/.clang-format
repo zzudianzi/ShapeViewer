@@ -1,0 +1,13 @@
+Language: Cpp
+BasedOnStyle: Microsoft
+
+AlignAfterOpenBracket: AlwaysBreak
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+  AfterUnion: true
+IndentCaseBlocks: true
+InsertNewlineAtEOF: true
+PackConstructorInitializers: NextLine
+PointerAlignment: Left
+SortIncludes: false
