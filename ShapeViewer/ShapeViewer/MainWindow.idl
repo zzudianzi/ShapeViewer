@@ -1,8 +1,8 @@
 namespace ShapeViewer
 {
-    [default_interface]
-    runtimeclass MainWindow : Microsoft.UI.Xaml.Window
+[default_interface] runtimeclass MainWindow : Microsoft.UI.Xaml.Window, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         MainWindow();
+        String WindowTitle;
     }
 }

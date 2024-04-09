@@ -6,6 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ShapeViewer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{x:Bind WindowTitle}"
+    Activated="Window_Activated"
+    Closed="Window_Closed"
     mc:Ignorable="d">
 
     <SwapChainPanel
