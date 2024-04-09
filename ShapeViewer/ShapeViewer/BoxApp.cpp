@@ -103,7 +103,7 @@ void BoxApp::Draw()
     auto indexBufferView = _BoxGeometry->IndexBufferView();
     _CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
     _CommandList->IASetIndexBuffer(&indexBufferView);
-    _CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
     _CommandList->SetGraphicsRootDescriptorTable(0, _CBVHeap->GetGPUDescriptorHandleForHeapStart());
 
@@ -245,42 +245,18 @@ void BoxApp::BuildShaderAndInputLayout()
 
 void BoxApp::BuildBoxGeometry()
 {
-    std::array<Vertex, 8> vertices{
-        Vertex{{-1.f, -1.f, -1.f}, XMFLOAT4{Colors::White}},
-        {{-1.f, +1.f, -1.f}, XMFLOAT4{Colors::Black}},
-        {{+1.f, +1.f, -1.f}, XMFLOAT4{Colors::Red}},
-        {{+1.f, -1.f, -1.f}, XMFLOAT4{Colors::Green}},
-        {{-1.f, -1.f, +1.f}, XMFLOAT4{Colors::Blue}},
-        {{-1.f, +1.f, +1.f}, XMFLOAT4{Colors::Yellow}},
-        {{+1.f, +1.f, +1.f}, XMFLOAT4{Colors::Cyan}},
-        {{+1.f, -1.f, +1.f}, XMFLOAT4{Colors::Magenta}},
-    };
+    constexpr size_t len = 100; 
+    const float dx = 2.f / len;
+    const float dz = DirectX::XM_2PI / len;
 
-    std::array<std::uint16_t, 36> indices = {
-        // front face
-        0, 1, 2,
-        0, 2, 3,
-
-        // back face
-        4, 6, 5,
-        4, 7, 6,
-
-        // left face
-        4, 5, 1,
-        4, 1, 0,
-
-        // right face
-        3, 2, 6,
-        3, 6, 7,
-
-        // top face
-        1, 5, 6,
-        1, 6, 2,
-
-        // bottom face
-        4, 0, 3,
-        4, 3, 7
-    };
+    std::array<Vertex, len> vertices;
+    std::array<std::uint16_t, len> indices;
+    for (size_t i = 0; i < len; i++)
+    {
+        vertices[i]._Pos = XMFLOAT3(-1.f + dx * i, 0, std::sin(dz * i));
+        vertices[i]._Color = XMFLOAT4(Colors::ForestGreen);
+        indices[i] = (uint16_t)i;
+    }
 
     const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
     const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(std::uint16_t));
@@ -323,10 +299,11 @@ void BoxApp::BuildPSO()
     psoDesc.VS = {reinterpret_cast<BYTE*>(_VSByteCode->GetBufferPointer()), _VSByteCode->GetBufferSize()};
     psoDesc.PS = {reinterpret_cast<BYTE*>(_PSByteCode->GetBufferPointer()), _PSByteCode->GetBufferSize()};
     psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+    psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
     psoDesc.SampleMask = UINT_MAX;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = _BackBufferFormat;
     psoDesc.SampleDesc.Count = _m4xMsaaState ? 4 : 1;
