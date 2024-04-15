@@ -121,11 +121,13 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BindableBase.h" />
     <ClInclude Include="BoxApp.h" />
     <ClInclude Include="CommonStructure.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
+    <ClInclude Include="DelegateCommand.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="MathHelper.h" />
@@ -144,9 +146,11 @@
     <Page Include="MainWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BindableBase.cpp" />
     <ClCompile Include="BoxApp.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
+    <ClCompile Include="DelegateCommand.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
@@ -163,10 +167,21 @@
     <ClCompile Include="UploadBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="BindableBase.idl" />
+    <Midl Include="DelegateCommand.idl" />
     <Midl Include="MainWindow.idl">
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Midl>
+    <Midl Include="MainWindowViewModel.idl" />
+    <ClInclude Include="MainWindowViewModel.h">
+      <SubType>Code</SubType>
+      <DependentUpon>MainWindowViewModel.idl</DependentUpon>
+    </ClInclude>
+    <ClCompile Include="MainWindowViewModel.cpp">
+      <SubType>Code</SubType>
+      <DependentUpon>MainWindowViewModel.idl</DependentUpon>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt">

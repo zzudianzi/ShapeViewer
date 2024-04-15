@@ -1,8 +1,13 @@
+import "MainWindowViewModel.idl";
+
 namespace ShapeViewer
 {
-[default_interface] runtimeclass MainWindow : Microsoft.UI.Xaml.Window, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+[default_interface] runtimeclass MainWindow : Microsoft.UI.Xaml.Window
     {
         MainWindow();
-        String WindowTitle;
+        MainWindowViewModel ViewModel
+        {
+            get;
+        };
     }
 }

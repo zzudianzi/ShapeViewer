@@ -1,0 +1,11 @@
+import "BindableBase.idl";
+
+namespace ShapeViewer
+{
+    runtimeclass MainWindowViewModel : ShapeViewer.BindableBase
+    {
+        MainWindowViewModel();
+
+        String Title;
+    }
+}

@@ -6,6 +6,7 @@
 
 #include "BoxApp.h"
 #include <winrt/Microsoft.UI.Input.h>
+#include "MainWindowViewModel.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Input;
@@ -19,6 +20,10 @@ using namespace Microsoft::UI::Composition;
 
 namespace winrt::ShapeViewer::implementation
 {
+MainWindow::MainWindow()
+{
+    _ViewModel = winrt::make<winrt::ShapeViewer::implementation::MainWindowViewModel>();
+}
 
 MainWindow::~MainWindow() = default;
 
@@ -29,29 +34,9 @@ void MainWindow::InitializeComponent()
     _Timer.Reset();
 }
 
-winrt::event_token MainWindow::PropertyChanged(PropertyChangedEventHandler const& handler)
+winrt::ShapeViewer::MainWindowViewModel MainWindow::ViewModel()
 {
-    return _PropertyChanged.add(handler);
-}
-
-void MainWindow::PropertyChanged(winrt::event_token const& token) noexcept
-{
-    _PropertyChanged.remove(token);
-}
-
-winrt::hstring MainWindow::WindowTitle()
-{
-    return _WindowTitle;
-}
-
-void MainWindow::WindowTitle(hstring const& value)
-{
-    if (_WindowTitle != value)
-    {
-        if (_WindowTitle != value)
-            _WindowTitle = value;
-        _PropertyChanged(*this, PropertyChangedEventArgs{L"WindowTitle"});
-    }
+    return _ViewModel;
 }
 
 void MainWindow::CalculateFrameStats()

@@ -8,6 +8,13 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
+    <Midl Include="MainWindowViewModel.idl" />
+    <Midl Include="BindableBase.idl">
+      <Filter>Infrastructure</Filter>
+    </Midl>
+    <Midl Include="DelegateCommand.idl">
+      <Filter>Infrastructure</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -19,6 +26,12 @@
     <ClCompile Include="UploadBuffer.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="BindableBase.cpp">
+      <Filter>Infrastructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DelegateCommand.cpp">
+      <Filter>Infrastructure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -32,6 +45,12 @@
     <ClInclude Include="MeshGeometry.h" />
     <ClInclude Include="CommonStructure.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="BindableBase.h">
+      <Filter>Infrastructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DelegateCommand.h">
+      <Filter>Infrastructure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -59,6 +78,12 @@
   <ItemGroup>
     <Filter Include="Assets">
       <UniqueIdentifier>{6414ef11-11a5-4d2a-a88a-fae0390b4b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModel">
+      <UniqueIdentifier>{528a8da5-2ef9-4825-8e79-69b698ae7808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Infrastructure">
+      <UniqueIdentifier>{4e76797e-27ba-4703-bdc5-d343db6ea387}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

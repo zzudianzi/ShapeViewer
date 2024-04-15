@@ -9,23 +9,14 @@ namespace winrt::ShapeViewer::implementation
 {
 struct MainWindow : MainWindowT<MainWindow>
 {
-    MainWindow()
-    {
-        // Xaml objects should not call InitializeComponent during construction.
-        // See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent
-    }
-
+    MainWindow();
     ~MainWindow();
 
     void InitializeComponent();
 
     void CalculateFrameStats();
 
-    winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
-    void PropertyChanged(winrt::event_token const& token) noexcept;
-
-    winrt::hstring WindowTitle();
-    void WindowTitle(hstring const& value);
+    winrt::ShapeViewer::MainWindowViewModel ViewModel();
 
   private:
     std::unique_ptr<D3DApp> _d3dApp;
@@ -36,7 +27,7 @@ struct MainWindow : MainWindowT<MainWindow>
 
     bool _WindowClosed = false;
 
-    winrt::event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> _PropertyChanged;
+    winrt::ShapeViewer::MainWindowViewModel _ViewModel{nullptr};
 
   public:
     void swapChainPanel_Loaded(
