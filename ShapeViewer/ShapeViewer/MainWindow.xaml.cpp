@@ -6,14 +6,22 @@
 
 #include "BoxApp.h"
 #include <winrt/Microsoft.UI.Input.h>
+#include <winrt/Windows.Storage.Pickers.h>
+#include <winrt/Windows.UI.Xaml.Interop.h>
+#include <microsoft.ui.xaml.window.h>
+#include <ShObjIdl_core.h>
 #include "MainWindowViewModel.h"
+#include <JsonHelper.h>
 
 using namespace winrt;
+using namespace Windows::Foundation;
 using namespace Microsoft::UI::Input;
 using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Controls;
 using namespace Microsoft::UI::Xaml::Data;
 using namespace Microsoft::UI::Xaml::Media;
 using namespace Microsoft::UI::Composition;
+using namespace Windows::Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -175,10 +183,33 @@ void winrt::ShapeViewer::implementation::MainWindow::Window_Activated(
     }
 }
 
-
-
 void winrt::ShapeViewer::implementation::MainWindow::Window_Closed(
     winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowEventArgs const& args)
 {
     _WindowClosed = true;
+}
+
+IAsyncAction winrt::ShapeViewer::implementation::MainWindow::btnLoadPolyline_Click(
+    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    winrt::Windows::Storage::Pickers::FileOpenPicker picker;
+    auto windowNative{this->m_inner.as<IWindowNative>()};
+    HWND hWnd{0};
+    windowNative->get_WindowHandle(&hWnd);
+
+    auto init_with_window = picker.as<IInitializeWithWindow>();
+    winrt::check_hresult(init_with_window->Initialize(hWnd));
+
+    picker.ViewMode(winrt::Windows::Storage::Pickers::PickerViewMode::Thumbnail);
+    picker.FileTypeFilter().Append(L"*");
+
+    StorageFile file = co_await picker.PickSingleFileAsync();
+    if (!file)
+    {
+        co_return;
+    }
+
+    winrt::hstring jsonString = co_await FileIO::ReadTextAsync(file);
+
+    ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
 }

@@ -11,12 +11,24 @@
     Closed="Window_Closed"
     mc:Ignorable="d">
 
-    <SwapChainPanel
-        x:Name="swapChainPanel"
-        Loaded="swapChainPanel_Loaded"
-        PointerMoved="swapChainPanel_PointerMoved"
-        PointerPressed="swapChainPanel_PointerPressed"
-        PointerReleased="swapChainPanel_PointerReleased"
-        SizeChanged="swapChainPanel_SizeChanged"
-        Unloaded="swapChainPanel_Unloaded" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <SwapChainPanel
+            x:Name="swapChainPanel"
+            Loaded="swapChainPanel_Loaded"
+            PointerMoved="swapChainPanel_PointerMoved"
+            PointerPressed="swapChainPanel_PointerPressed"
+            PointerReleased="swapChainPanel_PointerReleased"
+            SizeChanged="swapChainPanel_SizeChanged"
+            Unloaded="swapChainPanel_Unloaded" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button
+                x:Name="btnLoadPolyline"
+                Click="btnLoadPolyline_Click"
+                Content="Load Polyline" />
+        </StackPanel>
+    </Grid>
 </Window>

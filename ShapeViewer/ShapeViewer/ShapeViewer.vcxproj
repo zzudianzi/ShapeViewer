@@ -129,6 +129,7 @@
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DelegateCommand.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="JsonHelper.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="MeshGeometry.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="MainWindow.xaml.h">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Polyline.h" />
     <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +154,7 @@
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DelegateCommand.cpp" />
     <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="JsonHelper.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
     <ClCompile Include="pch.cpp">
@@ -164,6 +167,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="Polyline.cpp" />
     <ClCompile Include="UploadBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>

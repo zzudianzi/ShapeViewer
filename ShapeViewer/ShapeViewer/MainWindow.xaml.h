@@ -23,7 +23,7 @@ struct MainWindow : MainWindowT<MainWindow>
     winrt::event_token _RenderingToken;
     GameTimer _Timer;
 
-    winrt::hstring _WindowTitle; 
+    winrt::hstring _WindowTitle;
 
     bool _WindowClosed = false;
 
@@ -55,6 +55,8 @@ struct MainWindow : MainWindowT<MainWindow>
     void Window_Closed(
         winrt::Windows::Foundation::IInspectable const& sender,
         winrt::Microsoft::UI::Xaml::WindowEventArgs const& args);
+    winrt::Windows::Foundation::IAsyncAction btnLoadPolyline_Click(
+        winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 };
 } // namespace winrt::ShapeViewer::implementation
 

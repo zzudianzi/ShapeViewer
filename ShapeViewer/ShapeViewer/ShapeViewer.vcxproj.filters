@@ -32,6 +32,10 @@
     <ClCompile Include="DelegateCommand.cpp">
       <Filter>Infrastructure</Filter>
     </ClCompile>
+    <ClCompile Include="Polyline.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -51,6 +55,10 @@
     <ClInclude Include="DelegateCommand.h">
       <Filter>Infrastructure</Filter>
     </ClInclude>
+    <ClInclude Include="Polyline.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -84,6 +92,9 @@
     </Filter>
     <Filter Include="Infrastructure">
       <UniqueIdentifier>{4e76797e-27ba-4703-bdc5-d343db6ea387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{16e2c624-e6fc-4916-87f2-4e4b6b0ac7c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
