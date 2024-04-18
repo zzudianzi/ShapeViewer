@@ -5,6 +5,8 @@
 #include "MathHelper.h"
 #include "UploadBuffer.h"
 
+#include "Polyline.h"
+
 struct ObjectConstants;
 
 class BoxApp : public D3DApp
@@ -30,6 +32,9 @@ class BoxApp : public D3DApp
     void BuildShaderAndInputLayout();
     void BuildBoxGeometry();
     void BuildPSO();
+
+
+    void UpdateGeometry(const ::ShapeViewer::Polyline& polyline) override;
 
   private:
     POINT _LastMousePos;

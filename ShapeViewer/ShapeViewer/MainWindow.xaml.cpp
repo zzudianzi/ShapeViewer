@@ -211,5 +211,7 @@ IAsyncAction winrt::ShapeViewer::implementation::MainWindow::btnLoadPolyline_Cli
 
     winrt::hstring jsonString = co_await FileIO::ReadTextAsync(file);
 
-    ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
+    auto polyline = ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
+
+    _d3dApp->UpdateGeometry(polyline);
 }

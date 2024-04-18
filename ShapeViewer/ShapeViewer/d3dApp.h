@@ -17,6 +17,8 @@
 
 #include "GameTimer.h"
 
+#include "Polyline.h"
+
 class D3DApp
 {
   public:
@@ -34,6 +36,10 @@ class D3DApp
     virtual void OnMouseMove(WPARAM btnState, int x, int y);
     
     float AspectRatio() const;
+
+    virtual void UpdateGeometry(const ::ShapeViewer::Polyline& polyline)
+    {
+    }
 
   protected:
     void CreateCommandObjects();

@@ -8,6 +8,7 @@
 #include <filesystem>
 
 using namespace DirectX;
+using namespace ShapeViewer;
 
 BoxApp::BoxApp(winrt::com_ptr<ISwapChainPanelNative> panelNative) : D3DApp(panelNative)
 {
@@ -249,9 +250,9 @@ void BoxApp::BuildBoxGeometry()
     const float dx = 2.f / len;
     const float dz = DirectX::XM_2PI / len;
 
-    std::array<Vertex, len> vertices;
-    std::array<std::uint16_t, len> indices;
-    for (size_t i = 0; i < len; i++)
+    std::array<Vertex, len / 2> vertices;
+    std::array<std::uint16_t, len / 2> indices;
+    for (size_t i = 0; i < len / 2; i++)
     {
         vertices[i]._Pos = XMFLOAT3(-1.f + dx * i, 0, std::sin(dz * i));
         vertices[i]._Color = XMFLOAT4(Colors::ForestGreen);
@@ -311,4 +312,57 @@ void BoxApp::BuildPSO()
     psoDesc.DSVFormat = _DepthStencilFormat;
 
     winrt::check_hresult(_Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSO.put())));
+}
+
+void BoxApp::UpdateGeometry(const ShapeViewer::Polyline& polyline)
+{
+    winrt::check_hresult(_CommandList->Reset(_DirectCmdListAlloc.get(), nullptr));
+
+    const Polyline::Vertices points = polyline.Points();
+    std::vector<Vertex> vertices;
+    size_t len = points.size();
+    vertices.resize(len);
+    std::vector<std::uint16_t> indices;
+    indices.resize(len);
+    for (size_t i = 0; i < len; i++)
+    {
+        vertices[i] = points[i];
+        indices[i] = (uint16_t)i;
+    }
+
+    const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
+    const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(std::uint16_t));
+
+    _BoxGeometry = std::make_unique<MeshGeometry>();
+    _BoxGeometry->_Name = "boxGeometry";
+
+    winrt::check_hresult(D3DCreateBlob(verticeByteSize, _BoxGeometry->_VertexBufferCPU.put()));
+    CopyMemory(_BoxGeometry->_VertexBufferCPU->GetBufferPointer(), vertices.data(), verticeByteSize);
+
+    winrt::check_hresult(D3DCreateBlob(indexByteSize, _BoxGeometry->_IndexBufferCPU.put()));
+    CopyMemory(_BoxGeometry->_IndexBufferCPU->GetBufferPointer(), indices.data(), indexByteSize);
+
+    _BoxGeometry->_VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
+        _Device, _CommandList, vertices.data(), verticeByteSize, _BoxGeometry->_VertexBufferUploader);
+
+    _BoxGeometry->_IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
+        _Device, _CommandList, indices.data(), indexByteSize, _BoxGeometry->_IndexBufferUploader);
+
+    _BoxGeometry->_VertexByteStride = sizeof(Vertex);
+    _BoxGeometry->_VertexBufferByteSize = verticeByteSize;
+    _BoxGeometry->_IndexFormat = DXGI_FORMAT_R16_UINT;
+    _BoxGeometry->_IndexBufferByteSize = indexByteSize;
+
+    SubmeshGeometry submesh;
+    submesh._IndexCount = (UINT)indices.size();
+    submesh._StartIndexLocation = 0;
+    submesh._BaseVertexLocation = 0;
+
+    _BoxGeometry->_DrawArgs["box"] = submesh;
+
+    winrt::check_hresult(_CommandList->Close());
+    ID3D12CommandList* cmdsList[] = {_CommandList.get()};
+    _CommandQueue->ExecuteCommandLists(_countof(cmdsList), cmdsList);
+
+    FlushCommandQueue();
 }
