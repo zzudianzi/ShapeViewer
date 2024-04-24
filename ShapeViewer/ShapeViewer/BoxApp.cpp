@@ -110,15 +110,17 @@ void BoxApp::Draw()
 
     _CommandList->DrawIndexedInstanced(_BoxGeometry->_DrawArgs["box"]._IndexCount, 1, 0, 0, 0);
 
-    auto transitionPresent = CD3DX12_RESOURCE_BARRIER::Transition(
+   /* auto transitionPresent = CD3DX12_RESOURCE_BARRIER::Transition(
         CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-    _CommandList->ResourceBarrier(1, &transitionPresent);
+    _CommandList->ResourceBarrier(1, &transitionPresent);*/
 
     winrt::check_hresult(_CommandList->Close());
 
     ID3D12CommandList* cmdsLists[] = {_CommandList.get()};
     _CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+    D3DApp::Draw2D();
 
     winrt::check_hresult(_SwapChain->Present(0, 0));
     _CurrentBackBuffer = (_CurrentBackBuffer + 1) % _SwapChainBufferCount;
@@ -130,14 +132,11 @@ void BoxApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
     _LastMousePos.x = x;
     _LastMousePos.y = y;
-
-    //SetCapture(_hMainWnd);
-
 }
 
 void BoxApp::OnMouseUp(WPARAM btnState, int x, int y)
 {
-    //ReleaseCapture();
+
 }
 
 void BoxApp::OnMouseMove(WPARAM btnState, int x, int y)

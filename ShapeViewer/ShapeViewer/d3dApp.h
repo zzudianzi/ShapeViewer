@@ -9,11 +9,17 @@
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 
 #include <d3d12.h>
-#include <dxgi1_4.h>
+#include <dxgi1_5.h>
 #include <winrt/base.h>
 #include <microsoft.ui.xaml.media.dxinterop.h>
+#include <d3d11on12.h>
+#include <d2d1.h>
+#include <d2d1_3.h>
+#include <dwrite.h>
 
 #include "GameTimer.h"
 
@@ -31,6 +37,8 @@ class D3DApp
     virtual void Update() = 0;
     virtual void Draw() = 0;
 
+    virtual void Draw2D();
+
     virtual void OnMouseDown(WPARAM btnState, int x, int y);
     virtual void OnMouseUp(WPARAM btnState, int x, int y);
     virtual void OnMouseMove(WPARAM btnState, int x, int y);
@@ -44,6 +52,7 @@ class D3DApp
   protected:
     void CreateCommandObjects();
     void CreateSwapChain();
+    void InitDirect2D();
     void FlushCommandQueue();
 
     virtual void CreateRtvAndDsvDescriptorHeaps();
@@ -58,10 +67,10 @@ class D3DApp
   protected:
     winrt::com_ptr<ISwapChainPanelNative> _PanelNative;
 
-    winrt::com_ptr<IDXGIFactory4> _Factory;
+    winrt::com_ptr<IDXGIFactory5> _Factory;
     winrt::com_ptr<ID3D12Device> _Device;
 
-    winrt::com_ptr<IDXGISwapChain1> _SwapChain;
+    winrt::com_ptr<IDXGISwapChain3> _SwapChain;
     static constexpr int _SwapChainBufferCount = 2;
     int _CurrentBackBuffer = 0;
     winrt::com_ptr<ID3D12Resource> _SwapChainBuffer[_SwapChainBufferCount];
@@ -91,4 +100,16 @@ class D3DApp
 
     D3D12_VIEWPORT _ScreenViewport;
     D3D12_RECT _ScissorRect;
+
+    winrt::com_ptr<ID3D11On12Device> _D11Device;
+    winrt::com_ptr<ID3D11DeviceContext> _D11Context;
+    winrt::com_ptr<ID2D1Device2> _D2D1Device;
+    winrt::com_ptr<ID2D1DeviceContext2> _D2D1Context;
+    winrt::com_ptr<ID2D1Factory3> _D2D1Factory;
+    winrt::com_ptr<IDWriteFactory> _DWriteFactory;
+    winrt::com_ptr<ID3D11Resource> _WrappedBackBuffers[_SwapChainBufferCount];
+    winrt::com_ptr<ID2D1RenderTarget> _D2D1RenderTarget[_SwapChainBufferCount];
+    winrt::com_ptr<ID2D1Bitmap1> _Bitmaps[_SwapChainBufferCount];
+    winrt::com_ptr<ID2D1SolidColorBrush> _Brush;
+    winrt::com_ptr<IDWriteTextFormat> _TextFormat;
 };

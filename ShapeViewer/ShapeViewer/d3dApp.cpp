@@ -65,6 +65,7 @@ bool D3DApp::InitDirect3D()
     assert(_m4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 
     CreateCommandObjects();
+    InitDirect2D();
     CreateSwapChain();
     CreateRtvAndDsvDescriptorHeaps();
 
@@ -97,13 +98,16 @@ void D3DApp::CreateSwapChain()
     swapChainDesc.SampleDesc.Count = _m4xMsaaState ? 4 : 1;
     swapChainDesc.SampleDesc.Quality = _m4xMsaaState ? (_m4xMsaaQuality - 1) : 0;
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    swapChainDesc.BufferCount = 2;
+    swapChainDesc.BufferCount = _SwapChainBufferCount;
     swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-    swapChainDesc.Flags = 0;
+    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
+    winrt::com_ptr<IDXGISwapChain1> swapChain;
     winrt::check_hresult(
-        _Factory->CreateSwapChainForComposition(_CommandQueue.get(), &swapChainDesc, nullptr, _SwapChain.put()));
+        _Factory->CreateSwapChainForComposition(_CommandQueue.get(), &swapChainDesc, nullptr, swapChain.put()));
+
+    _SwapChain = swapChain.as<IDXGISwapChain3>();
 }
 
 void D3DApp::AssociateSwapChain()
@@ -161,13 +165,20 @@ void D3DApp::OnResize(float width, float height)
 
     FlushCommandQueue();
 
-    _CommandList->Reset(_DirectCmdListAlloc.get(), nullptr);
+    winrt::check_hresult(_CommandList->Reset(_DirectCmdListAlloc.get(), nullptr));
 
     // Release the previous resource we will be recreating.
     for (int i = 0; i < _SwapChainBufferCount; i++)
     {
         _SwapChainBuffer[i] = nullptr;
+        _WrappedBackBuffers[i] = nullptr;
+        _D2D1RenderTarget[i] = nullptr;
+        _Bitmaps[i] = nullptr;
     }
+
+    _D2D1Context->SetTarget(nullptr);
+    _D11Context->Flush();
+
 
     _DepthStencilBuffer = nullptr;
 
@@ -184,6 +195,27 @@ void D3DApp::OnResize(float width, float height)
     {
         winrt::check_hresult(_SwapChain->GetBuffer(i, IID_PPV_ARGS(_SwapChainBuffer[i].put())));
         _Device->CreateRenderTargetView(_SwapChainBuffer[i].get(), nullptr, rtvHeapHandle);
+
+        D3D11_RESOURCE_FLAGS d3d11Flags = {D3D11_BIND_RENDER_TARGET};
+        winrt::check_hresult(_D11Device->CreateWrappedResource(
+            _SwapChainBuffer[i].get(),
+            &d3d11Flags,
+            D3D12_RESOURCE_STATE_RENDER_TARGET,
+            D3D12_RESOURCE_STATE_PRESENT,
+            IID_PPV_ARGS(_WrappedBackBuffers[i].put())));
+
+
+        winrt::com_ptr<IDXGISurface> surface;
+        surface = _WrappedBackBuffers[i].as<IDXGISurface>();
+
+        float dpi = 96.f;
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(
+            D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+            D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
+            dpi,
+            dpi);  
+        winrt::check_hresult(_D2D1Context->CreateBitmapFromDxgiSurface(surface.get(), &bitmapProperties, _Bitmaps[i].put()));
+
         rtvHeapHandle.Offset(1, _RTVDescriptorSize);
     }
 
@@ -244,8 +276,6 @@ void D3DApp::OnResize(float width, float height)
     _ScreenViewport.MaxDepth = 1.f;
 
     _ScissorRect = {0, 0, _ClientWidth, _ClientHeight};
-
-    _CommandList->RSSetScissorRects(1, &_ScissorRect);
 }
 
 ID3D12Resource* D3DApp::CurrentBackBuffer() const
@@ -271,15 +301,111 @@ float D3DApp::AspectRatio() const
 
 void D3DApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
-
 }
 
 void D3DApp::OnMouseUp(WPARAM btnState, int x, int y)
 {
-
 }
 
 void D3DApp::OnMouseMove(WPARAM btnState, int x, int y)
 {
+}
 
+void D3DApp::InitDirect2D()
+{
+    UINT d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+    D2D1_FACTORY_OPTIONS d2dFactoryOptions = {};
+
+#if defined(_DEBUG) || defined(DEBUG)
+    d2dFactoryOptions.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+
+    d3d11DeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+    D3D_FEATURE_LEVEL level;
+
+    winrt::com_ptr<ID3D11Device> d11Device;
+
+    auto s = _CommandQueue.get();
+
+    winrt::check_hresult(D3D11On12CreateDevice(
+        _Device.get(),
+        d3d11DeviceFlags,
+        nullptr,
+        0,
+        reinterpret_cast<IUnknown**>(&s),
+        1,
+        0,
+        d11Device.put(),
+        _D11Context.put(),
+        &level));
+
+    _D11Device = d11Device.try_as<ID3D11On12Device>();
+
+    // Create D2D/DWrite components
+    {
+        D2D1_DEVICE_CONTEXT_OPTIONS deviceOptions = D2D1_DEVICE_CONTEXT_OPTIONS_NONE;
+
+        winrt::check_hresult(D2D1CreateFactory(
+            D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &d2dFactoryOptions, _D2D1Factory.put_void()));
+
+        winrt::com_ptr<IDXGIDevice> dxgiDevice;
+        dxgiDevice = _D11Device.as<IDXGIDevice>();
+
+        winrt::check_hresult(_D2D1Factory->CreateDevice(dxgiDevice.get(), _D2D1Device.put()));
+
+        winrt::check_hresult(_D2D1Device->CreateDeviceContext(deviceOptions, _D2D1Context.put()));
+
+        winrt::com_ptr<IUnknown> dwriteFactory;
+        winrt::check_hresult(
+            DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), dwriteFactory.put()));
+
+        _DWriteFactory = dwriteFactory.as<IDWriteFactory>();
+    }
+
+    // Create D2D/Dwrite objects for rendering text
+    {
+        winrt::check_hresult(_D2D1Context->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), _Brush.put()));
+
+        winrt::check_hresult(_DWriteFactory->CreateTextFormat(
+            L"Verdana",
+            nullptr,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            50,
+            L"en-us",
+            _TextFormat.put()));
+
+        winrt::check_hresult(_TextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER));
+        winrt::check_hresult(_TextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER));
+    }
+}
+
+void D3DApp::Draw2D()
+{
+    UINT currentBuffer = _SwapChain->GetCurrentBackBufferIndex();
+    D2D1_SIZE_F rtSize = _Bitmaps[_CurrentBackBuffer]->GetSize();
+    D2D1_RECT_F textRect = D2D1::RectF(0, 0, rtSize.width, rtSize.height);
+    static const WCHAR text[] = L"11On12";
+
+    // Acquire our wrapped render target resource for the current back buffer.
+    auto s = _WrappedBackBuffers[_CurrentBackBuffer].get();
+
+    _D11Device->AcquireWrappedResources(&s, 1);
+
+    // Render text directly to the back buffer.
+    _D2D1Context->SetTarget(_Bitmaps[_CurrentBackBuffer].get());
+    _D2D1Context->BeginDraw();
+    _D2D1Context->SetTransform(D2D1::Matrix3x2F::Identity());
+    _D2D1Context->DrawTextW(text, _countof(text) - 1, _TextFormat.get(), &textRect, _Brush.get());
+    winrt::check_hresult(_D2D1Context->EndDraw());
+
+    // Release our wrapped render target resource. Releasing
+    // transitions the back buffer resource to the state specified
+    // as the OutState when the wrapped resource was created.
+   _D11Device->ReleaseWrappedResources(&s, 1);
+
+    // Flush to submit the 11 command list to the shared command queue.
+    _D11Context->Flush();
 }
