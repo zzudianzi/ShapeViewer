@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CommonStructure.h"
+#include "Geometry.h"
 
 #include <vector>
 

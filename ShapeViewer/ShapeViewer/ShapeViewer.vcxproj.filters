@@ -36,6 +36,46 @@
       <Filter>Geometry</Filter>
     </ClCompile>
     <ClCompile Include="JsonHelper.cpp" />
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Circle.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Rect.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Ellipse.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="LineSegment.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Polygon.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="MathTool.cpp" />
+    <ClCompile Include="Vis.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="VisPolygon.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Overlay.cpp">
+      <Filter>D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="ROIPolygon.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
+    <ClCompile Include="ROI.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -59,6 +99,46 @@
       <Filter>Geometry</Filter>
     </ClInclude>
     <ClInclude Include="JsonHelper.h" />
+    <ClInclude Include="Geometry.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Ellipse.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="LineSegment.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Polygon.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MathTool.h" />
+    <ClInclude Include="Vis.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="VisPolygon.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="Display.h">
+      <Filter>D2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Overlay.h">
+      <Filter>D2D</Filter>
+    </ClInclude>
+    <ClInclude Include="ROIPolygon.h">
+      <Filter>ROI</Filter>
+    </ClInclude>
+    <ClInclude Include="ROI.h">
+      <Filter>ROI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -95,6 +175,15 @@
     </Filter>
     <Filter Include="Geometry">
       <UniqueIdentifier>{16e2c624-e6fc-4916-87f2-4e4b6b0ac7c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ROI">
+      <UniqueIdentifier>{8c5e216b-9bde-4e40-849d-4e0a3f861029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vis">
+      <UniqueIdentifier>{fc44d5d7-1b67-4ba3-9fd1-2a061c450f28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="D2D">
+      <UniqueIdentifier>{b3ecf3f0-5f0c-4a8e-b774-d8183d238318}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

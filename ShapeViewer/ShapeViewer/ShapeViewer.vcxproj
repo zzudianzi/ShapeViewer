@@ -123,14 +123,21 @@
   <ItemGroup>
     <ClInclude Include="BindableBase.h" />
     <ClInclude Include="BoxApp.h" />
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="CommonStructure.h" />
+    <ClInclude Include="Display.h" />
+    <ClInclude Include="Overlay.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DelegateCommand.h" />
+    <ClInclude Include="Ellipse.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="JsonHelper.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LineSegment.h" />
+    <ClInclude Include="MathTool.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="MeshGeometry.h" />
     <ClInclude Include="pch.h" />
@@ -140,8 +147,15 @@
     <ClInclude Include="MainWindow.xaml.h">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Polygon.h" />
     <ClInclude Include="Polyline.h" />
+    <ClInclude Include="Rect.h" />
+    <ClInclude Include="ROI.h" />
+    <ClInclude Include="ROIPolygon.h" />
     <ClInclude Include="UploadBuffer.h" />
+    <ClInclude Include="Vis.h" />
+    <ClInclude Include="VisPolygon.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -150,12 +164,19 @@
   <ItemGroup>
     <ClCompile Include="BindableBase.cpp" />
     <ClCompile Include="BoxApp.cpp" />
+    <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Display.cpp" />
+    <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DelegateCommand.cpp" />
+    <ClCompile Include="Ellipse.cpp" />
     <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="JsonHelper.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LineSegment.cpp" />
+    <ClCompile Include="MathTool.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -167,8 +188,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Polyline.cpp" />
+    <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="ROI.cpp" />
+    <ClCompile Include="ROIPolygon.cpp" />
     <ClCompile Include="UploadBuffer.cpp" />
+    <ClCompile Include="Vis.cpp" />
+    <ClCompile Include="VisPolygon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="BindableBase.idl" />
