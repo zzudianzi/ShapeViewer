@@ -88,8 +88,6 @@ winrt::com_ptr<ID3DBlob> d3dUtil::CompileShader(
     winrt::com_ptr<ID3DBlob> byteCode;
     winrt::com_ptr<ID3DBlob> errors;
 
-    bool exist = ::PathFileExistsW(filename.c_str());
-
     hr = D3DCompileFromFile(
         filename.c_str(),
         defines,

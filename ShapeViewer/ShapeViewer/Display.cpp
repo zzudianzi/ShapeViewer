@@ -5,7 +5,7 @@
 
 using namespace ShapeViewer;
 
-Display::Display()
+Display::Display() : _DragMark(0)
 {
     _TransformToScene = D2D1::Matrix3x2F::Identity();
     _TransformToWindow = D2D1::Matrix3x2F::Identity();
@@ -71,11 +71,12 @@ bool Display::FitSize()
         scale = sceneHeight / size.height;
     }
 
-    auto scaleMatrix = D2D1::Matrix3x2F::Scale(scale, scale);
-    D2D1_POINT_2F windowCenter = D2D1::Point2F(size.width * 0.5 * scale, size.height * 0.5 * scale);
-    D2D1_POINT_2F sceneCenter =
-        D2D1::Point2F((rect->St().X() + rect->Ed().X()) * 0.5, (rect->St().Y() + rect->Ed().Y()) * 0.5);
-    auto translateMatrix = D2D1::Matrix3x2F::Translation(sceneCenter.x - windowCenter.x, sceneCenter.y - windowCenter.y);
+    auto scaleMatrix = D2D1::Matrix3x2F::Scale((float)scale, (float)scale);
+    D2D1_POINT_2F windowCenter = D2D1::Point2F((float)(size.width * 0.5 * scale), (float)(size.height * 0.5 * scale));
+    D2D1_POINT_2F sceneCenter = D2D1::Point2F(
+        (float)((rect->St().X() + rect->Ed().X()) * 0.5), (float)((rect->St().Y() + rect->Ed().Y()) * 0.5));
+    auto translateMatrix =
+        D2D1::Matrix3x2F::Translation(sceneCenter.x - windowCenter.x, sceneCenter.y - windowCenter.y);
 
     _TransformToScene = scaleMatrix * translateMatrix;
     _TransformToWindow = _TransformToScene;
@@ -300,7 +301,6 @@ void Display::OnMouseMove(WPARAM btnState, int x, int y)
             return;
         }
 
-        auto pt = ToScenePoint(x, y);
         double maxDis = NearRadius / scale;
         bool find = false;
         for (auto&& roi : _ROIs)
@@ -329,8 +329,8 @@ void Display::OnMouseWheel(WPARAM btnState, int x, int y, int delta)
         _Anchor.Y(y);
     }
 
-    auto pt = _TransformToScene.TransformPoint(D2D1::Point2F(_Anchor.X(), _Anchor.Y()));
-    auto scale = delta > 0 ? 0.9 : 1.1;
+    auto pt = _TransformToScene.TransformPoint(D2D1::Point2F((float)_Anchor.X(), (float)_Anchor.Y()));
+    auto scale = delta > 0 ? 0.9f : 1.1f;
     auto scaleMatrix = D2D1::Matrix3x2F::Scale(scale, scale, pt);
 
     _TransformToScene = _TransformToScene * scaleMatrix;

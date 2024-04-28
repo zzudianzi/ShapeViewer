@@ -150,7 +150,7 @@ bool ROIPolygon::Draw(ID2D1RenderTarget* rt, ID2D1SolidColorBrush* brush, const 
         for (auto&& pos : markPositions)
         {
             auto center =
-                D2D1::Ellipse(transform.TransformPoint(D2D1::Point2F(pos.X(), pos.Y())), MarkRadius, MarkRadius);
+                D2D1::Ellipse(transform.TransformPoint(D2D1::Point2F((float)pos.X(), (float)pos.Y())), MarkRadius, MarkRadius);
             rt->FillEllipse(center, brush);
         }
     }

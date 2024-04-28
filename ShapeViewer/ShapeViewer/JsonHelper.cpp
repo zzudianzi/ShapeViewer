@@ -22,7 +22,7 @@ ShapeViewer::Polyline JsonHelper::ReadJson(const std::wstring& jsonString)
 
     auto array = jsonValue.GetArray();
 
-    auto elementNum = array.Size();
+    auto elementNum = (int)array.Size();
 
     Polyline polyline;
     Polyline::Vertices& vertices = polyline.Points();
