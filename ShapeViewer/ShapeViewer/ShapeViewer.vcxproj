@@ -125,6 +125,7 @@
     <ClInclude Include="BoxApp.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="CommonStructure.h" />
+    <ClInclude Include="D2DWrapper.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Overlay.h" />
     <ClInclude Include="d3dApp.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="BindableBase.cpp" />
     <ClCompile Include="BoxApp.cpp" />
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="D2DWrapper.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="d3dApp.cpp" />

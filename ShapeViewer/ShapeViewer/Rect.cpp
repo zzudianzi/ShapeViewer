@@ -177,7 +177,23 @@ Rect* Rect::Clone() const
     return new Rect(*this);
 }
 
-bool ShapeViewer::operator == (const Rect& l, const Rect& r)
+bool ShapeViewer::operator==(const Rect& l, const Rect& r)
 {
     return l.operator==(r);
+}
+
+Rect Rect::operator|(const Rect& rc)
+{
+    return {
+        (std::min)(_St.X(), rc.St().X()),
+        (std::min)(_St.Y(), rc.St().Y()),
+        (std::max)(_Ed.X(), rc.Ed().X()),
+        (std::max)(_Ed.Y(), rc.Ed().Y())};
+}
+
+Rect& Rect::operator|=(const Rect& rc)
+{
+    *this = this->operator|(rc);
+
+    return *this;
 }

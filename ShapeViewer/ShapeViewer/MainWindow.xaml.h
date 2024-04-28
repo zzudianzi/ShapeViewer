@@ -19,7 +19,7 @@ struct MainWindow : MainWindowT<MainWindow>
     winrt::ShapeViewer::MainWindowViewModel ViewModel();
 
   private:
-    std::unique_ptr<D3DApp> _d3dApp;
+    std::unique_ptr<::ShapeViewer::D3DApp> _d3dApp;
     winrt::event_token _RenderingToken;
     GameTimer _Timer;
 
@@ -57,6 +57,11 @@ struct MainWindow : MainWindowT<MainWindow>
         winrt::Microsoft::UI::Xaml::WindowEventArgs const& args);
     winrt::Windows::Foundation::IAsyncAction btnLoadPolyline_Click(
         winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+    void btnFit_Click(
+        winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+    void swapChainPanel_PointerWheelChanged(
+        winrt::Windows::Foundation::IInspectable const& sender,
+        winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 };
 } // namespace winrt::ShapeViewer::implementation
 

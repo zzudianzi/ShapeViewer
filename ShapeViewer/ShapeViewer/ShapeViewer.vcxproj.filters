@@ -76,6 +76,9 @@
     <ClCompile Include="ROI.cpp">
       <Filter>ROI</Filter>
     </ClCompile>
+    <ClCompile Include="D2DWrapper.cpp">
+      <Filter>D2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -138,6 +141,9 @@
     </ClInclude>
     <ClInclude Include="ROI.h">
       <Filter>ROI</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DWrapper.h">
+      <Filter>D2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

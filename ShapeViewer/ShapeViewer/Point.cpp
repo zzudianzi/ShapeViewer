@@ -4,9 +4,9 @@
 
 using namespace ShapeViewer;
 
-Point::Point()
+Point::Point() : _X(0.), _Y(0.)
 {
-    Point(0., 0.);
+    
 }
 
 Point::Point(double x, double y)
@@ -17,7 +17,7 @@ Point::Point(double x, double y)
 
 Point::Point(const Point& obj)
 {
-    Point(obj._X, obj._Y);
+    *this = obj;
 }
 
 Point& Point::operator=(const Point& obj)

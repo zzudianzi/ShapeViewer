@@ -24,10 +24,18 @@ class Polygon : public Geometry
     Vertices& GetVertices();
     const Vertices& GetVertices() const;
 
-    Corner GetCorner(int index);
+    Point GetCenter() const;
+
+    Corner GetCorner(int index) const;
     bool UpdateCorner(const Corner& corner, int index);
 
   private:
     Vertices _Vertices;
 };
+//
+//bool operator==(const Polygon& polygon, const Geometry& obj)
+//{
+//    return polygon.operator==(obj);
+//}
+
 } // namespace ShapeViewer

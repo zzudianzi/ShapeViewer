@@ -47,6 +47,10 @@ class Rect : public Geometry
     bool Copy(const Geometry& obj) override;
     Rect* Clone() const override;
 
+    Rect operator|(const Rect& rc);
+
+    Rect& operator|=(const Rect& rc);
+
   private:
     Point _St;
     Point _Ed;

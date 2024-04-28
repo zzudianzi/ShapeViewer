@@ -87,7 +87,7 @@ void BoxApp::Draw()
         CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
     _CommandList->ResourceBarrier(1, &transitionRender);
 
-    _CommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::LightSteelBlue, 0, nullptr);
+    _CommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::Black, 0, nullptr);
     _CommandList->ClearDepthStencilView(
         DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.f, 0, 0, nullptr);
 
@@ -130,17 +130,19 @@ void BoxApp::Draw()
 
 void BoxApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
+    D3DApp::OnMouseDown(btnState, x, y);
     _LastMousePos.x = x;
     _LastMousePos.y = y;
 }
 
 void BoxApp::OnMouseUp(WPARAM btnState, int x, int y)
 {
-
+    D3DApp::OnMouseUp(btnState, x, y);
 }
 
 void BoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 {
+    D3DApp::OnMouseMove(btnState, x, y);
     if (btnState & MK_LBUTTON)
     {
         // Make each pixel correspond to a quarter of a degree.

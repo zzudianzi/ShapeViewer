@@ -22,6 +22,7 @@
             PointerMoved="swapChainPanel_PointerMoved"
             PointerPressed="swapChainPanel_PointerPressed"
             PointerReleased="swapChainPanel_PointerReleased"
+            PointerWheelChanged="swapChainPanel_PointerWheelChanged"
             SizeChanged="swapChainPanel_SizeChanged"
             Unloaded="swapChainPanel_Unloaded" />
         <StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -29,6 +30,10 @@
                 x:Name="btnLoadPolyline"
                 Click="btnLoadPolyline_Click"
                 Content="Load Polyline" />
+            <Button
+                x:Name="btnFit"
+                Click="btnFit_Click"
+                Content="Fit" />
         </StackPanel>
     </Grid>
 </Window>

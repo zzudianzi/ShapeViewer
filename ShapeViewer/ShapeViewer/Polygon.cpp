@@ -78,7 +78,25 @@ const Polygon::Vertices& Polygon::GetVertices() const
     return _Vertices;
 }
 
-Polygon::Corner Polygon::GetCorner(int index)
+Point Polygon::GetCenter() const
+{
+    int count = (int)_Vertices.size();
+    Point center;
+    for (auto&& vertex : _Vertices)
+    {
+        center = center + vertex;
+    }
+
+    if (count > 0)
+    {
+        center.X(center.X() / (double)count);
+        center.Y(center.Y() / (double)count);
+    }
+
+    return center;
+}
+
+Polygon::Corner Polygon::GetCorner(int index) const
 {
     if (index < 0 || index >= _Vertices.size())
     {

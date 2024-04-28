@@ -9,6 +9,8 @@
 
 struct ObjectConstants;
 
+namespace ShapeViewer
+{
 class BoxApp : public D3DApp
 {
   public:
@@ -32,7 +34,6 @@ class BoxApp : public D3DApp
     void BuildShaderAndInputLayout();
     void BuildBoxGeometry();
     void BuildPSO();
-
 
     void UpdateGeometry(const ::ShapeViewer::Polyline& polyline) override;
 
@@ -61,3 +62,5 @@ class BoxApp : public D3DApp
 
     winrt::com_ptr<ID3D12PipelineState> _PSO;
 };
+
+} // namespace ShapeViewer

@@ -16,15 +16,15 @@
 #include <dxgi1_5.h>
 #include <winrt/base.h>
 #include <microsoft.ui.xaml.media.dxinterop.h>
-#include <d3d11on12.h>
-#include <d2d1.h>
-#include <d2d1_3.h>
-#include <dwrite.h>
 
 #include "GameTimer.h"
 
 #include "Polyline.h"
 
+#include "D2DWrapper.h"
+
+namespace ShapeViewer
+{
 class D3DApp
 {
   public:
@@ -42,17 +42,20 @@ class D3DApp
     virtual void OnMouseDown(WPARAM btnState, int x, int y);
     virtual void OnMouseUp(WPARAM btnState, int x, int y);
     virtual void OnMouseMove(WPARAM btnState, int x, int y);
-    
+    virtual void OnMouseWheel(WPARAM btnState, int x, int y, int delta);
+
     float AspectRatio() const;
 
     virtual void UpdateGeometry(const ::ShapeViewer::Polyline& polyline)
     {
     }
 
+    const Display& GetDisplay() const;
+    Display& GetDisplay();
+
   protected:
     void CreateCommandObjects();
     void CreateSwapChain();
-    void InitDirect2D();
     void FlushCommandQueue();
 
     virtual void CreateRtvAndDsvDescriptorHeaps();
@@ -101,15 +104,7 @@ class D3DApp
     D3D12_VIEWPORT _ScreenViewport;
     D3D12_RECT _ScissorRect;
 
-    winrt::com_ptr<ID3D11On12Device> _D11Device;
-    winrt::com_ptr<ID3D11DeviceContext> _D11Context;
-    winrt::com_ptr<ID2D1Device2> _D2D1Device;
-    winrt::com_ptr<ID2D1DeviceContext2> _D2D1Context;
-    winrt::com_ptr<ID2D1Factory3> _D2D1Factory;
-    winrt::com_ptr<IDWriteFactory> _DWriteFactory;
-    winrt::com_ptr<ID3D11Resource> _WrappedBackBuffers[_SwapChainBufferCount];
-    winrt::com_ptr<ID2D1RenderTarget> _D2D1RenderTarget[_SwapChainBufferCount];
-    winrt::com_ptr<ID2D1Bitmap1> _Bitmaps[_SwapChainBufferCount];
-    winrt::com_ptr<ID2D1SolidColorBrush> _Brush;
-    winrt::com_ptr<IDWriteTextFormat> _TextFormat;
+    D2DWrapper _D2DWrapper;
 };
+
+} // namespace ShapeViewer

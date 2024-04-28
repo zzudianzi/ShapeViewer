@@ -13,6 +13,9 @@
 #include "MainWindowViewModel.h"
 #include <JsonHelper.h>
 
+#include "ROIPolygon.h"
+#include "Display.h"
+
 using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Microsoft::UI::Input;
@@ -76,7 +79,7 @@ void MainWindow::CalculateFrameStats()
 void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_Loaded(
     winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    _d3dApp.reset(new BoxApp(swapChainPanel().as<ISwapChainPanelNative>()));
+    _d3dApp.reset(new ::ShapeViewer::BoxApp(swapChainPanel().as<ISwapChainPanelNative>()));
     _d3dApp->InitDirect3D();
     _d3dApp->OnResize(swapChainPanel().ActualWidth(), swapChainPanel().ActualHeight());
 
@@ -143,6 +146,19 @@ void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerRelea
     winrt::Windows::Foundation::IInspectable const& sender,
     winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
 {
+    WPARAM btnState = 0;
+    auto pointerPoint = e.GetCurrentPoint(swapChainPanel());
+    if (pointerPoint.Properties().IsLeftButtonPressed())
+    {
+        btnState |= MK_LBUTTON;
+    }
+
+    if (pointerPoint.Properties().IsRightButtonPressed())
+    {
+        btnState |= MK_RBUTTON;
+    }
+    auto position = pointerPoint.Position();
+    _d3dApp->OnMouseUp(btnState, position.X, position.Y);
     swapChainPanel().ReleasePointerCapture(e.Pointer());
 }
 
@@ -214,4 +230,33 @@ IAsyncAction winrt::ShapeViewer::implementation::MainWindow::btnLoadPolyline_Cli
     auto polyline = ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
 
     _d3dApp->UpdateGeometry(polyline);
+
+    auto& display = _d3dApp->GetDisplay();
+
+    ::ShapeViewer::Polygon polygon;
+    for (auto&& pt : polyline.Points())
+    {
+        ::ShapeViewer::Point point{pt._Pos.x, pt._Pos.z};
+        auto& vertices = polygon.GetVertices();
+        vertices.push_back(point * 100);
+    }
+
+    auto roi = new ::ShapeViewer::ROIPolygon(polygon);
+    display.AddROI(roi);
+}
+
+void winrt::ShapeViewer::implementation::MainWindow::btnFit_Click(
+    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    _d3dApp->GetDisplay().FitSize();
+}
+
+void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerWheelChanged(
+    winrt::Windows::Foundation::IInspectable const& sender,
+    winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+{
+    auto pointerPoint = e.GetCurrentPoint(swapChainPanel());
+    auto position = pointerPoint.Position();
+
+    _d3dApp->OnMouseWheel(0, position.X, position.Y, pointerPoint.Properties().MouseWheelDelta());
 }
