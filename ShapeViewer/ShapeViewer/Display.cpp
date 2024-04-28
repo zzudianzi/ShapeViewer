@@ -301,19 +301,20 @@ void Display::OnMouseMove(WPARAM btnState, int x, int y)
         }
 
         auto pt = ToScenePoint(x, y);
-        double masDis = NearRadius / scale;
+        double maxDis = NearRadius / scale;
         bool find = false;
         for (auto&& roi : _ROIs)
         {
+            roi->DrawMark(false);
             if (find)
             {
-                roi->DrawMark(false);
                 continue;
             }
 
-            find = roi->PtNearBoundary(pt, masDis);
-            if (find)
+            if (!find && (roi->PtNearBoundary(pt, maxDis) ||
+                Math::CalcDistanceFormPointToPoint(pt, roi->Center()) < maxDis))
             {
+                find = true;
                 roi->DrawMark(true);
             }
         }
