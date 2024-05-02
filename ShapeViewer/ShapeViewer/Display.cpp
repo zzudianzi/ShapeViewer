@@ -79,13 +79,7 @@ bool Display::FitSize()
         D2D1::Matrix3x2F::Translation(sceneCenter.x - windowCenter.x, sceneCenter.y - windowCenter.y);
 
     _TransformToScene = scaleMatrix * translateMatrix;
-    _TransformToWindow = _TransformToScene;
-    _TransformToWindow.Invert();
-
-    for (auto&& roi : _ROIs)
-    {
-        CreateD2DFigure(roi->GetVis());
-    }
+    UpdateTransformToWindow();
 
     return true;
 }
@@ -147,7 +141,6 @@ int Display::AddROI(ROI* roi)
 {
     _ROIs.push_back(roi);
     roi->SetDisplay(this);
-    CreateD2DFigure(roi->GetVis());
 
     return (int)_ROIs.size() - 1;
 }
@@ -237,14 +230,14 @@ void Display::OnMouseDown(WPARAM btnState, int x, int y)
     _OriDragROI.reset(nullptr);
     _DragMode = DragMode::None;
 
-    double scale = _TransformToScene.m11;
+    double scale = GetSceneScale();
     if (scale < Math::Epsilon)
     {
         return;
     }
 
     auto pt = ToScenePoint(x, y);
-    double minDis = NearRadius / scale;
+    double minDis = NearRadius * scale;
     double minDis2 = minDis * minDis;
 
     for (auto&& roi : _ROIs)
@@ -266,34 +259,56 @@ void Display::OnMouseDown(WPARAM btnState, int x, int y)
         }
     }
 
+    
+    _AnchorWindow = {(double)x, (double)y};
+    _AnchorSceneTransform = _TransformToScene;
+
     if (_ROIDrag)
     {
-        _ROIDrag->DrawMark(true);
         _DragMode = DragMode::ROI;
-        _Anchor = pt;
+        _ROIDrag->DrawMark(true);
+        return;
     }
+    
+    _DragMode = DragMode::Scene;
 }
 
 void Display::OnMouseUp(WPARAM btnState, int x, int y)
 {
     if (_DragMode == DragMode::ROI)
     {
-        _DragMode = DragMode::None;
         _DragMark = 0;
         _ROIDrag->DrawMark(false);
         _ROIDrag = nullptr;
         _OriDragROI.reset(nullptr);
     }
+
+    _DragMode = DragMode::None;
 }
 
 void Display::OnMouseMove(WPARAM btnState, int x, int y)
 {
+    auto anchor = ToScenePoint(_AnchorWindow);
     auto pt = ToScenePoint(x, y);
     if (_DragMode == DragMode::ROI && _ROIDrag)
     {
-        _ROIDrag->DragMark(_DragMark, _Anchor, pt, *_OriDragROI);
+        _ROIDrag->DragMark(_DragMark, anchor, pt, *_OriDragROI);
+
+        return;
     }
-    else
+
+    if (_DragMode == DragMode::Scene)
+    {
+        // Here is a bit tricky, the behavior we expected is that the translation in the window CS should be applied to the scene transform.
+        auto vector = (_AnchorWindow - Point((double)x, (double)y)) * GetSceneScale();
+        auto translation = D2D1::Matrix3x2F::Translation((float)vector.X(), (float)vector.Y());
+        _TransformToScene = _AnchorSceneTransform * translation;
+        UpdateTransformToWindow();
+
+        return;
+    }
+
+    assert(_DragMode == DragMode::None);
     {
         double scale = _TransformToScene.m11;
         if (scale < Math::Epsilon)
@@ -301,7 +316,7 @@ void Display::OnMouseMove(WPARAM btnState, int x, int y)
             return;
         }
 
-        double maxDis = NearRadius / scale;
+        double maxDis = NearRadius * scale;
         bool find = false;
         for (auto&& roi : _ROIs)
         {
@@ -323,34 +338,74 @@ void Display::OnMouseMove(WPARAM btnState, int x, int y)
 
 void Display::OnMouseWheel(WPARAM btnState, int x, int y, int delta)
 {
-    if (std::abs((int)(_Anchor.X() + 0.5) - x) > 5. || std::abs((int)(_Anchor.Y() + 0.5) - y) > 5.)
+    auto anchor = ToScenePoint(x, y);
+    if (std::abs((int)(anchor.X() + 0.5) - x) > 5. || std::abs((int)(anchor.Y() + 0.5) - y) > 5.)
     {
-        _Anchor.X(x);
-        _Anchor.Y(y);
+        anchor.X(x);
+        anchor.Y(y);
     }
 
-    auto pt = _TransformToScene.TransformPoint(D2D1::Point2F((float)_Anchor.X(), (float)_Anchor.Y()));
+    auto pt = _TransformToScene.TransformPoint(D2D1::Point2F((float)anchor.X(), (float)anchor.Y()));
     auto scale = delta > 0 ? 0.9f : 1.1f;
     auto scaleMatrix = D2D1::Matrix3x2F::Scale(scale, scale, pt);
 
     _TransformToScene = _TransformToScene * scaleMatrix;
-    _TransformToWindow = _TransformToScene;
-    _TransformToWindow.Invert();
-
-    for (auto&& roi : _ROIs)
-    {
-        CreateD2DFigure(roi->GetVis());
-    }
+    UpdateTransformToWindow();
 }
 
-bool Display::CreateD2DFigure(Vis& vis)
-{
-    return vis.CreateD2DFigure(_D2D1Factory.get(), _TransformToWindow);
-}
-
-::ShapeViewer::Point Display::ToScenePoint(int x, int y)
+::ShapeViewer::Point Display::ToScenePoint(int x, int y) const
 {
     auto pointer = D2D1::Point2F((float)x, (float)y);
     auto pointerInScene = _TransformToScene.TransformPoint(pointer);
     return {pointerInScene.x, pointerInScene.y};
+}
+
+::ShapeViewer::Point Display::ToScenePoint(const ::ShapeViewer::Point& pt) const
+{
+    auto pointer = D2D1::Point2F((float)pt.X(), (float)pt.Y());
+    auto pointerInScene = _TransformToScene.TransformPoint(pointer);
+    return {pointerInScene.x, pointerInScene.y};
+}
+
+void Display::UpdateTransformToWindow()
+{
+    _TransformToWindow = _TransformToScene;
+    _TransformToWindow.Invert();
+}
+
+double Display::GetSceneScale() const
+{
+    return static_cast<double>(_TransformToScene.m11);
+}
+
+double Display::GetWindowScale() const
+{
+    return static_cast<double>(_TransformToWindow.m11);
+}
+
+const winrt::com_ptr<ID2D1Factory3>& Display::D2D1Factory() const
+{
+    return _D2D1Factory;
+}
+winrt::com_ptr<ID2D1Factory3>& Display::D2D1Factory()
+{
+    return _D2D1Factory;
+}
+
+const winrt::com_ptr<ID2D1RenderTarget>& Display::RenderTarget() const
+{
+    return _D2D1RenderTarget;
+}
+winrt::com_ptr<ID2D1RenderTarget>& Display::RenderTarget()
+{
+    return _D2D1RenderTarget;
+}
+
+const winrt::com_ptr<ID2D1SolidColorBrush>& Display::Brush() const
+{
+    return _Brush;
+}
+winrt::com_ptr<ID2D1SolidColorBrush>& Display::Brush()
+{
+    return _Brush;
 }

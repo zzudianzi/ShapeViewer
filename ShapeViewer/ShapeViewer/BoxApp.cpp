@@ -104,7 +104,7 @@ void BoxApp::Draw()
     auto indexBufferView = _BoxGeometry->IndexBufferView();
     _CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
     _CommandList->IASetIndexBuffer(&indexBufferView);
-    _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
+    _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
     _CommandList->SetGraphicsRootDescriptorTable(0, _CBVHeap->GetGPUDescriptorHandleForHeapStart());
 
@@ -247,18 +247,36 @@ void BoxApp::BuildShaderAndInputLayout()
 
 void BoxApp::BuildBoxGeometry()
 {
-    constexpr size_t len = 100; 
-    const float dx = 2.f / len;
-    const float dz = DirectX::XM_2PI / len;
+    std::array<Vertex, 8> vertices = {
+        Vertex({XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White)}),
+        Vertex({XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black)}),
+        Vertex({XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red)}),
+        Vertex({XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green)}),
+        Vertex({XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue)}),
+        Vertex({XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow)}),
+        Vertex({XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan)}),
+        Vertex({XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta)})};
 
-    std::array<Vertex, len / 2> vertices;
-    std::array<std::uint16_t, len / 2> indices;
-    for (size_t i = 0; i < len / 2; i++)
+    for (auto&& vertex : vertices)
     {
-        vertices[i]._Pos = XMFLOAT3(-1.f + dx * i, 0, std::sin(dz * i));
-        vertices[i]._Color = XMFLOAT4(Colors::ForestGreen);
-        indices[i] = (uint16_t)i;
+        vertex._Color.w = 0.1f;
     }
+
+	std::array<std::uint16_t, 24> indices =
+	{
+		0, 1,
+        1, 2,
+        2, 3,
+        3, 0,
+        4, 5,
+        5, 6,
+        6, 7,
+        7, 4,
+        0, 4,
+        1, 5,
+        2, 6,
+        3, 7
+	};
 
     const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
     const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(std::uint16_t));

@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "Vis.h"
+#include "Display.h"
 #include <d2d1helper.h>
 
 using namespace ShapeViewer;
 
-Vis::Vis() : _Visible(true)
+Vis::Vis() : _Visible(true), _Display(nullptr)
 {
     _Color = D2D1::ColorF(D2D1::ColorF::SkyBlue);
 }
@@ -17,4 +18,19 @@ D2D1_COLOR_F Vis::Color() const
 void Vis::Color(D2D1_COLOR_F value)
 {
     _Color = value;
+}
+
+Display* Vis::GetDisplay()
+{
+    return _Display;
+}
+
+const Display* Vis::GetDisplay() const
+{
+    return _Display;
+}
+
+void Vis::SetDisplay(Display* display)
+{
+    _Display = display;
 }

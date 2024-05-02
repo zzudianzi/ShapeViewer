@@ -122,7 +122,6 @@ void ROIPolygon::DragMark(int selectedMark, const Point& oriPos, const Point& cu
             {
                 vertices[i] = oriROIPolygon.GetPolygon().GetCorner(i) + offset;
             }
-            GetVisPolygon().CreateD2DFigure(GetDisplay()->D2D1Factory().get(), GetDisplay()->TransformToWindow());
         }
         break;
     default:
@@ -133,8 +132,6 @@ void ROIPolygon::DragMark(int selectedMark, const Point& oriPos, const Point& cu
             {
                 vertices[index] = curPos;
             }
-
-            GetVisPolygon().CreateD2DFigure(GetDisplay()->D2D1Factory().get(), GetDisplay()->TransformToWindow());
         }
         break;
     }

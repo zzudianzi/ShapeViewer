@@ -8,7 +8,6 @@
 
 namespace ShapeViewer
 {
-class Display;
 class ROI
 {
   public:
@@ -38,18 +37,9 @@ class ROI
     virtual const Vis& GetVis() const = 0;
     virtual Vis& GetVis() = 0;
 
-    const Display* GetDisplay() const
-    {
-        return _Display;
-    }
-    Display* GetDisplay()
-    {
-        return _Display;
-    }
-    void SetDisplay(Display* display)
-    {
-        _Display = display;
-    }
+    const Display* GetDisplay() const;
+    Display* GetDisplay();
+    void SetDisplay(Display* display);
 
     static constexpr double MarkRadius = 3.;
 
@@ -61,8 +51,6 @@ class ROI
     bool _DrawMark;
     bool _Visible;
     bool _Scaling;
-
-    Display* _Display;
 
     D2D1_COLOR_F _MarkColor;
 };

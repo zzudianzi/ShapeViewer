@@ -137,7 +137,6 @@ void D2DWrapper::Draw(int bufferIndex)
     _D2D1Context->BeginDraw();
     _D2D1Context->SetTransform(D2D1::Matrix3x2F::Identity());
     _Display.Draw();
-    _D2D1Context->DrawTextW(text, _countof(text) - 1, _TextFormat.get(), &textRect, _Brush.get());
     winrt::check_hresult(_D2D1Context->EndDraw());
 
     // Release our wrapped render target resource. Releasing

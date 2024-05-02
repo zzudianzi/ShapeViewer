@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "VisPolygon.h"
+#include "Display.h"
 #include <ranges>
 
 using namespace ShapeViewer;
@@ -19,9 +20,18 @@ const ShapeViewer::Polygon& VisPolygon::Polygon() const
     return _Polygon;
 }
 
-bool VisPolygon::CreateD2DFigure(ID2D1Factory3* factory, const D2D1::Matrix3x2F& transform)
+bool VisPolygon::CreateD2DFigure()
 {
     _D2D1Gemoetry = nullptr;
+
+    assert(_Display);
+    if (!_Display)
+    {
+        return false;
+    }
+
+    auto factory = _Display->D2D1Factory();
+    auto transform = _Display->TransformToWindow();
 
     if (!factory)
     {
@@ -57,6 +67,10 @@ bool VisPolygon::CreateD2DFigure(ID2D1Factory3* factory, const D2D1::Matrix3x2F&
 
 void VisPolygon::Draw(ID2D1RenderTarget* rt, ID2D1SolidColorBrush* brush)
 {
+    if (!CreateD2DFigure())
+    {
+        return;
+    }
     brush->SetColor(_Color);
     rt->DrawGeometry(_D2D1Gemoetry.get(), brush);
 }

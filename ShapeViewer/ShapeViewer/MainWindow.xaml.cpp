@@ -20,20 +20,17 @@ using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Microsoft::UI::Input;
 using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Input;
 using namespace Microsoft::UI::Xaml::Controls;
 using namespace Microsoft::UI::Xaml::Data;
 using namespace Microsoft::UI::Xaml::Media;
 using namespace Microsoft::UI::Composition;
 using namespace Windows::Storage;
+using namespace winrt::ShapeViewer::implementation;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
-namespace winrt::ShapeViewer::implementation
-{
 MainWindow::MainWindow()
 {
-    _ViewModel = winrt::make<winrt::ShapeViewer::implementation::MainWindowViewModel>();
+    _ViewModel = winrt::make<MainWindowViewModel>();
 }
 
 MainWindow::~MainWindow() = default;
@@ -67,17 +64,14 @@ void MainWindow::CalculateFrameStats()
 
         std::wstring windowText = L"ShapeViwer....fps: " + fpsStr + L"   mspf: " + mspfStr;
 
-        Title(windowText.c_str());
+        //Title(windowText.c_str());
 
         frameCount = 0;
         timeEplapsed += 1.;
     }
 }
 
-} // namespace winrt::ShapeViewer::implementation
-
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_Loaded(
-    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void MainWindow::swapChainPanel_Loaded(IInspectable const& sender, RoutedEventArgs const& e)
 {
     _d3dApp.reset(new ::ShapeViewer::BoxApp(swapChainPanel().as<ISwapChainPanelNative>()));
     _d3dApp->InitDirect3D();
@@ -86,25 +80,22 @@ void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_Loaded(
     _RenderingToken = CompositionTarget::Rendering({this, &MainWindow::swapChainPanel_RenderingHandler});
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_Unloaded(
-    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void MainWindow::swapChainPanel_Unloaded(IInspectable const& sender, RoutedEventArgs const& e)
 {
     _d3dApp.reset(nullptr);
     CompositionTarget::Rendering(_RenderingToken);
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_SizeChanged(
-    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
+void MainWindow::swapChainPanel_SizeChanged(IInspectable const& sender, SizeChangedEventArgs const& e)
 {
     if (swapChainPanel().IsLoaded())
     {
-        winrt::Windows::Foundation::Size size = e.NewSize();
+        Size size = e.NewSize();
         _d3dApp->OnResize(size.Width, size.Height);
     }
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_RenderingHandler(
-    winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args)
+void MainWindow::swapChainPanel_RenderingHandler(IInspectable const& sender, IInspectable const& args)
 {
     if (_WindowClosed || !_d3dApp)
     {
@@ -115,9 +106,7 @@ void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_RenderingHan
     _d3dApp->Draw();
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerPressed(
-    winrt::Windows::Foundation::IInspectable const& sender,
-    winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+void MainWindow::swapChainPanel_PointerPressed(IInspectable const& sender, PointerRoutedEventArgs const& e)
 {
     if (e.Pointer().PointerDeviceType() != PointerDeviceType::Mouse)
     {
@@ -142,9 +131,7 @@ void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerPress
     _d3dApp->OnMouseDown(btnState, position.X, position.Y);
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerReleased(
-    winrt::Windows::Foundation::IInspectable const& sender,
-    winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+void MainWindow::swapChainPanel_PointerReleased(IInspectable const& sender, PointerRoutedEventArgs const& e)
 {
     WPARAM btnState = 0;
     auto pointerPoint = e.GetCurrentPoint(swapChainPanel());
@@ -162,9 +149,7 @@ void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerRelea
     swapChainPanel().ReleasePointerCapture(e.Pointer());
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerMoved(
-    winrt::Windows::Foundation::IInspectable const& sender,
-    winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+void MainWindow::swapChainPanel_PointerMoved(IInspectable const& sender, PointerRoutedEventArgs const& e)
 {
     auto pointerPoint = e.GetCurrentPoint(swapChainPanel());
     auto position = pointerPoint.Position();
@@ -183,9 +168,7 @@ void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerMoved
     _d3dApp->OnMouseMove(btnState, position.X, position.Y);
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::Window_Activated(
-    winrt::Windows::Foundation::IInspectable const& sender,
-    winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs const& args)
+void MainWindow::Window_Activated(IInspectable const& sender, WindowActivatedEventArgs const& args)
 {
     if (args.WindowActivationState() == WindowActivationState::Deactivated)
     {
@@ -199,14 +182,12 @@ void winrt::ShapeViewer::implementation::MainWindow::Window_Activated(
     }
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::Window_Closed(
-    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowEventArgs const& args)
+void MainWindow::Window_Closed(IInspectable const& sender, WindowEventArgs const& args)
 {
     _WindowClosed = true;
 }
 
-IAsyncAction winrt::ShapeViewer::implementation::MainWindow::btnLoadPolyline_Click(
-    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+IAsyncAction MainWindow::btnLoadPolyline_Click(IInspectable const& sender, RoutedEventArgs const& e)
 {
     winrt::Windows::Storage::Pickers::FileOpenPicker picker;
     auto windowNative{this->m_inner.as<IWindowNative>()};
@@ -229,8 +210,6 @@ IAsyncAction winrt::ShapeViewer::implementation::MainWindow::btnLoadPolyline_Cli
 
     auto polyline = ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
 
-    _d3dApp->UpdateGeometry(polyline);
-
     auto& display = _d3dApp->GetDisplay();
 
     ::ShapeViewer::Polygon polygon;
@@ -238,22 +217,19 @@ IAsyncAction winrt::ShapeViewer::implementation::MainWindow::btnLoadPolyline_Cli
     {
         ::ShapeViewer::Point point{pt._Pos.x, pt._Pos.z};
         auto& vertices = polygon.GetVertices();
-        vertices.push_back(point * 100);
+        vertices.push_back(point);
     }
 
     auto roi = new ::ShapeViewer::ROIPolygon(polygon);
     display.AddROI(roi);
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::btnFit_Click(
-    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void MainWindow::btnFit_Click(IInspectable const& sender, RoutedEventArgs const& e)
 {
     _d3dApp->GetDisplay().FitSize();
 }
 
-void winrt::ShapeViewer::implementation::MainWindow::swapChainPanel_PointerWheelChanged(
-    winrt::Windows::Foundation::IInspectable const& sender,
-    winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+void MainWindow::swapChainPanel_PointerWheelChanged(IInspectable const& sender, PointerRoutedEventArgs const& e)
 {
     auto pointerPoint = e.GetCurrentPoint(swapChainPanel());
     auto position = pointerPoint.Position();

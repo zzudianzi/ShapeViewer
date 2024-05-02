@@ -7,6 +7,7 @@
 
 namespace ShapeViewer
 {
+class Display;
 class Vis
 {
   public:
@@ -27,11 +28,14 @@ class Vis
         _Visible = value;
     }
 
-    virtual bool CreateD2DFigure(ID2D1Factory3* factory, const D2D1::Matrix3x2F& transform) = 0;
+    Display* GetDisplay();
+    const Display* GetDisplay() const;
+    void SetDisplay(Display* display);
 
     virtual std::optional<::ShapeViewer::Rect> BoundingRect() const = 0;
 
   protected:
+    Display* _Display;
     bool _Visible;
     D2D1_COLOR_F _Color;
 };

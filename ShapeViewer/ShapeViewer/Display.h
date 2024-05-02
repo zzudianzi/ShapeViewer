@@ -16,7 +16,8 @@ class Display
     enum class DragMode
     {
         None,
-        ROI
+        ROI,
+        Scene,
     };
 
     void SetSceneRect(const Rect& rc);
@@ -46,8 +47,6 @@ class Display
     D2D1::Matrix3x2F& TransformToWindow();
     void TransformToWindow(const D2D1::Matrix3x2F& value);
 
-    bool CreateD2DFigure(Vis& vis);
-
     void Draw();
 
     virtual void OnMouseDown(WPARAM btnState, int x, int y);
@@ -55,37 +54,22 @@ class Display
     virtual void OnMouseMove(WPARAM btnState, int x, int y);
     virtual void OnMouseWheel(WPARAM btnState, int x, int y, int delta);
 
-    const winrt::com_ptr<ID2D1Factory3>& D2D1Factory() const
-    {
-        return _D2D1Factory;
-    }
-    winrt::com_ptr<ID2D1Factory3>& D2D1Factory()
-    {
-        return _D2D1Factory;
-    }
+    const winrt::com_ptr<ID2D1Factory3>& D2D1Factory() const;
+    winrt::com_ptr<ID2D1Factory3>& D2D1Factory();
+    const winrt::com_ptr<ID2D1RenderTarget>& RenderTarget() const;
+    winrt::com_ptr<ID2D1RenderTarget>& RenderTarget();
+    const winrt::com_ptr<ID2D1SolidColorBrush>& Brush() const;
+    winrt::com_ptr<ID2D1SolidColorBrush>& Brush();
 
-    const winrt::com_ptr<ID2D1RenderTarget>& RenderTarget() const
-    {
-        return _D2D1RenderTarget;
-    }
-    winrt::com_ptr<ID2D1RenderTarget>& RenderTarget()
-    {
-        return _D2D1RenderTarget;
-    }
+    ::ShapeViewer::Point ToScenePoint(int x, int y) const;
+    ::ShapeViewer::Point ToScenePoint(const ::ShapeViewer::Point& pt) const;
 
-    const winrt::com_ptr<ID2D1SolidColorBrush>& Brush() const
-    {
-        return _Brush;
-    }
-    winrt::com_ptr<ID2D1SolidColorBrush>& Brush()
-    {
-        return _Brush;
-    }
+    static constexpr double NearRadius = 5.;
 
-    static constexpr double NearRadius = 3.;
-
-    private:
-    ::ShapeViewer::Point ToScenePoint(int x, int y);
+  private:
+    void UpdateTransformToWindow();
+    double GetSceneScale() const;
+    double GetWindowScale() const;
 
   private:
     std::vector<Overlay*> _Overlays;
@@ -94,7 +78,8 @@ class Display
     D2D1::Matrix3x2F _TransformToWindow;
 
     std::vector<ROI*> _ROIs;
-    ::ShapeViewer::Point _Anchor;
+    ::ShapeViewer::Point _AnchorWindow;
+    D2D1::Matrix3x2F _AnchorSceneTransform;
     DragMode _DragMode = DragMode::None;
     int _DragMark;
     ROI* _ROIDrag = nullptr;

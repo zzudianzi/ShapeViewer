@@ -46,3 +46,16 @@ void ROI::MarkColor(D2D1_COLOR_F value)
 {
     _MarkColor = value;
 }
+
+const Display* ROI::GetDisplay() const
+{
+    return GetVis().GetDisplay();
+}
+Display* ROI::GetDisplay()
+{
+    return GetVis().GetDisplay();
+}
+void ROI::SetDisplay(Display* display)
+{
+    GetVis().SetDisplay(display);
+}
