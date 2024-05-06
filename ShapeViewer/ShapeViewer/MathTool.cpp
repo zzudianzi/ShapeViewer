@@ -236,4 +236,51 @@ bool PointNearLineSegment(const Point& point, const Point& pt1, const Point& pt2
 
     return d1 * d2 < 0;
 }
+
+bool PointNearBoundary(const Point& point, const std::vector<Point>& vertices, double maxDis)
+{
+    int size = (int)vertices.size();
+    for (int i = 0; i < size; i++)
+    {
+        const auto& pt1 = vertices[(i + size - 1) % size];
+        const auto& pt2 = vertices[i];
+        if (Math::PointNearLineSegment(point, pt1, pt2, maxDis))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::optional<::ShapeViewer::Rect> CalcBoundingRect(const std::vector<::ShapeViewer::Point>& points)
+{
+    if (points.empty())
+    {
+        return {};
+    }
+    auto rc = std::make_optional<::ShapeViewer::Rect>(points[0].X(), points[0].Y(), points[0].X(), points[0].Y());
+
+    for (int i = 1; i < (int)points.size(); i++)
+    {
+        if (points[i].X() < rc->St().X())
+        {
+            rc->St().X(points[i].X());
+        }
+        if (points[i].Y() < rc->St().Y())
+        {
+            rc->St().Y(points[i].Y());
+        }
+        if (points[i].X() > rc->Ed().X())
+        {
+            rc->Ed().X(points[i].X());
+        }
+        if (points[i].Y() > rc->Ed().Y())
+        {
+            rc->Ed().Y(points[i].Y());
+        }
+    }
+
+    return rc;
+}
 } // namespace ShapeViewer::Math

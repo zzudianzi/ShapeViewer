@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Point.h"
+#include "Rect.h"
 
 #include <vector>
+#include <optional>
 
 namespace ShapeViewer::Math
 {
@@ -29,4 +30,6 @@ double CalcDistanceFormPointToLine(double x, double y, double a, double b, doubl
 double CalcDistanceFormPointToLine(const Point& pt, double a, double b, double c);
 double CalcDistanceFormPointToPoint(const Point& pt1, const Point& pt2);
 bool PointNearLineSegment(const Point& point, const Point& pt1, const Point& pt2, double disMax);
+bool PointNearBoundary(const Point& point, const std::vector<Point>& vertices, double maxDis);
+std::optional<::ShapeViewer::Rect> CalcBoundingRect(const std::vector<::ShapeViewer::Point>& points);
 } // namespace ShapeViewer::Math

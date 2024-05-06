@@ -1,27 +1,26 @@
 #include "pch.h"
-#include "VisPolygon.h"
-#include "Display.h"
+#include "VisRect.h"
 #include "MathTool.h"
-#include <ranges>
+#include "Display.h"
 
 using namespace ShapeViewer;
 
-VisPolygon::VisPolygon(const ShapeViewer::Polygon& polygon)
+VisRect::VisRect(const ::ShapeViewer::Rect& rect)
 {
-    _Polygon = polygon;
+    _Rect = rect;
 }
 
-ShapeViewer::Polygon& VisPolygon::Polygon()
+::ShapeViewer::Rect& VisRect::Rect()
 {
-    return _Polygon;
+    return _Rect;
 }
 
-const ShapeViewer::Polygon& VisPolygon::Polygon() const
+const ::ShapeViewer::Rect& VisRect::Rect() const
 {
-    return _Polygon;
+    return _Rect;
 }
 
-bool VisPolygon::CreateD2DFigure()
+bool VisRect::CreateD2DFigure()
 {
     _D2D1Gemoetry = nullptr;
 
@@ -39,7 +38,7 @@ bool VisPolygon::CreateD2DFigure()
         return false;
     }
 
-    const auto& vertices = _Polygon.GetVertices();
+    const auto& vertices = Rect().Corners();
     if (vertices.empty())
     {
         return false;
@@ -66,7 +65,7 @@ bool VisPolygon::CreateD2DFigure()
     return true;
 }
 
-void VisPolygon::Draw()
+void VisRect::Draw()
 {
     if (!CreateD2DFigure())
     {
@@ -79,14 +78,9 @@ void VisPolygon::Draw()
     rt->DrawGeometry(_D2D1Gemoetry.get(), brush.get());
 }
 
-std::optional<::ShapeViewer::Rect> VisPolygon::BoundingRect() const
+std::optional<::ShapeViewer::Rect> VisRect::BoundingRect() const
 {
-    if (!_Visible)
-    {
-        return {};
-    }
-
-    const auto& vertices = Polygon().GetVertices();
-    assert(!vertices.empty());
-    return Math::CalcBoundingRect(vertices);
+    const auto& corners = Rect().Corners();
+    assert(corners.size() == 4);
+    return Math::CalcBoundingRect(corners);
 }

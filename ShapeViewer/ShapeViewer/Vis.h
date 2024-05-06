@@ -13,7 +13,7 @@ class Vis
   public:
     Vis();
     virtual ~Vis() = default;
-    virtual void Draw(ID2D1RenderTarget* rt, ID2D1SolidColorBrush* brush) = 0;
+    virtual void Draw() = 0;
 
     D2D1_COLOR_F Color() const;
     void Color(D2D1_COLOR_F value);

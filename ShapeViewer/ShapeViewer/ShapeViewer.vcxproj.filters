@@ -79,6 +79,18 @@
     <ClCompile Include="D2DWrapper.cpp">
       <Filter>D2D</Filter>
     </ClCompile>
+    <ClCompile Include="VisPolyline.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="ROIPolyline.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
+    <ClCompile Include="VisRect.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="ROIRect.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -144,6 +156,18 @@
     </ClInclude>
     <ClInclude Include="D2DWrapper.h">
       <Filter>D2D</Filter>
+    </ClInclude>
+    <ClInclude Include="VisPolyline.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="ROIPolyline.h">
+      <Filter>ROI</Filter>
+    </ClInclude>
+    <ClInclude Include="VisRect.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="ROIRect.h">
+      <Filter>ROI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

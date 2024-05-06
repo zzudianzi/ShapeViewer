@@ -1,10 +1,10 @@
 #pragma once
 #include "ROI.h"
-#include "VisPolygon.h"
+#include "VisPolyline.h"
 
 namespace ShapeViewer
 {
-class ROIPolygon : public ROI
+class ROIPolyline : public ROI
 {
   public:
     enum class Mark
@@ -14,15 +14,15 @@ class ROIPolygon : public ROI
 
     ROI* Clone() const override;
 
-    explicit ROIPolygon(const Polygon& polygon);
-    explicit ROIPolygon(const VisPolygon& visPolygon);
-    explicit ROIPolygon(const ROIPolygon& roiPolygon);
+    explicit ROIPolyline(const Polyline& Polyline);
+    explicit ROIPolyline(const VisPolyline& visPolyline);
+    explicit ROIPolyline(const ROIPolyline& roiPolyline);
 
-    ::ShapeViewer::Polygon& GetPolygon();
-    const ::ShapeViewer::Polygon& GetPolygon() const;
+    ::ShapeViewer::Polyline& GetPolyline();
+    const ::ShapeViewer::Polyline& GetPolyline() const;
 
-    ::ShapeViewer::VisPolygon& GetVisPolygon();
-    const ::ShapeViewer::VisPolygon& GetVisPolygon() const;
+    ::ShapeViewer::VisPolyline& GetVisPolyline();
+    const ::ShapeViewer::VisPolyline& GetVisPolyline() const;
 
     const Vis& GetVis() const override;
     Vis& GetVis() override;
@@ -38,6 +38,6 @@ class ROIPolygon : public ROI
     bool Draw() override;
 
   private:
-    ::ShapeViewer::VisPolygon _VisPolygon;
+    ::ShapeViewer::VisPolyline _VisPolyline;
 };
 } // namespace ShapeViewer

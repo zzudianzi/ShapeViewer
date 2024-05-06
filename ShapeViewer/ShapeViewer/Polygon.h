@@ -32,10 +32,5 @@ class Polygon : public Geometry
   private:
     Vertices _Vertices;
 };
-//
-//bool operator==(const Polygon& polygon, const Geometry& obj)
-//{
-//    return polygon.operator==(obj);
-//}
 
 } // namespace ShapeViewer

@@ -219,7 +219,7 @@ void Display::Draw()
 {
     for (auto&& roi : _ROIs)
     {
-        roi->Draw(_D2D1RenderTarget.get(), _Brush.get(), _TransformToWindow);
+        roi->Draw();
     }
 }
 

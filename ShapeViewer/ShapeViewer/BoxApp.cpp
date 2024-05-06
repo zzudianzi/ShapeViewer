@@ -335,7 +335,7 @@ void BoxApp::BuildPSO()
 
 void BoxApp::UpdateGeometry(const ShapeViewer::Polyline& polyline)
 {
-    winrt::check_hresult(_CommandList->Reset(_DirectCmdListAlloc.get(), nullptr));
+    /*winrt::check_hresult(_CommandList->Reset(_DirectCmdListAlloc.get(), nullptr));
 
     const Polyline::Vertices points = polyline.Points();
     std::vector<Vertex> vertices;
@@ -383,5 +383,5 @@ void BoxApp::UpdateGeometry(const ShapeViewer::Polyline& polyline)
     ID3D12CommandList* cmdsList[] = {_CommandList.get()};
     _CommandQueue->ExecuteCommandLists(_countof(cmdsList), cmdsList);
 
-    FlushCommandQueue();
+    FlushCommandQueue();*/
 }

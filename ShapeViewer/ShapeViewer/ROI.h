@@ -43,7 +43,7 @@ class ROI
 
     static constexpr double MarkRadius = 3.;
 
-    virtual bool Draw(ID2D1RenderTarget* rt, ID2D1SolidColorBrush* brush, const D2D1::Matrix3x2F& transform) = 0;
+    virtual bool Draw() = 0;
 
   protected:
     ROI();

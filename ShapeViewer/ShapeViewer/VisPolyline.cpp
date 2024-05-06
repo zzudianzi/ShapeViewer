@@ -1,27 +1,25 @@
 #include "pch.h"
-#include "VisPolygon.h"
+#include "VisPolyline.h"
 #include "Display.h"
-#include "MathTool.h"
-#include <ranges>
 
 using namespace ShapeViewer;
 
-VisPolygon::VisPolygon(const ShapeViewer::Polygon& polygon)
+VisPolyline::VisPolyline(const ShapeViewer::Polyline& Polyline)
 {
-    _Polygon = polygon;
+    _Polyline = Polyline;
 }
 
-ShapeViewer::Polygon& VisPolygon::Polygon()
+ShapeViewer::Polyline& VisPolyline::Polyline()
 {
-    return _Polygon;
+    return _Polyline;
 }
 
-const ShapeViewer::Polygon& VisPolygon::Polygon() const
+const ShapeViewer::Polyline& VisPolyline::Polyline() const
 {
-    return _Polygon;
+    return _Polyline;
 }
 
-bool VisPolygon::CreateD2DFigure()
+bool VisPolyline::CreateD2DFigure()
 {
     _D2D1Gemoetry = nullptr;
 
@@ -39,7 +37,7 @@ bool VisPolygon::CreateD2DFigure()
         return false;
     }
 
-    const auto& vertices = _Polygon.GetVertices();
+    const auto& vertices = _Polyline.GetVertices();
     if (vertices.empty())
     {
         return false;
@@ -60,13 +58,13 @@ bool VisPolygon::CreateD2DFigure()
         sink->AddLine(transform.TransformPoint(D2D1::Point2F(vertex.X(), vertex.Y())));
     }
 
-    sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+    sink->EndFigure(D2D1_FIGURE_END_OPEN);
     winrt::check_hresult(sink->Close());
 
     return true;
 }
 
-void VisPolygon::Draw()
+void VisPolyline::Draw()
 {
     if (!CreateD2DFigure())
     {
@@ -79,14 +77,42 @@ void VisPolygon::Draw()
     rt->DrawGeometry(_D2D1Gemoetry.get(), brush.get());
 }
 
-std::optional<::ShapeViewer::Rect> VisPolygon::BoundingRect() const
+std::optional<::ShapeViewer::Rect> VisPolyline::BoundingRect() const
 {
     if (!_Visible)
     {
         return {};
     }
 
-    const auto& vertices = Polygon().GetVertices();
+    const auto& vertices = Polyline().GetVertices();
     assert(!vertices.empty());
-    return Math::CalcBoundingRect(vertices);
+    if (vertices.empty())
+    {
+        return {};
+    }
+
+    auto rc =
+        std::make_optional<::ShapeViewer::Rect>(vertices[0].X(), vertices[0].Y(), vertices[0].X(), vertices[0].Y());
+
+    for (int i = 1; i < (int)vertices.size(); i++)
+    {
+        if (vertices[i].X() < rc->St().X())
+        {
+            rc->St().X(vertices[i].X());
+        }
+        if (vertices[i].Y() < rc->St().Y())
+        {
+            rc->St().Y(vertices[i].Y());
+        }
+        if (vertices[i].X() > rc->Ed().X())
+        {
+            rc->Ed().X(vertices[i].X());
+        }
+        if (vertices[i].Y() > rc->Ed().Y())
+        {
+            rc->Ed().Y(vertices[i].Y());
+        }
+    }
+
+    return rc;
 }

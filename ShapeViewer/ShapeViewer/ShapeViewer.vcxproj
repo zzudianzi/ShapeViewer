@@ -155,9 +155,13 @@
     <ClInclude Include="Rect.h" />
     <ClInclude Include="ROI.h" />
     <ClInclude Include="ROIPolygon.h" />
+    <ClInclude Include="ROIPolyline.h" />
+    <ClInclude Include="ROIRect.h" />
     <ClInclude Include="UploadBuffer.h" />
     <ClInclude Include="Vis.h" />
     <ClInclude Include="VisPolygon.h" />
+    <ClInclude Include="VisPolyline.h" />
+    <ClInclude Include="VisRect.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -197,9 +201,13 @@
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="ROI.cpp" />
     <ClCompile Include="ROIPolygon.cpp" />
+    <ClCompile Include="ROIPolyline.cpp" />
+    <ClCompile Include="ROIRect.cpp" />
     <ClCompile Include="UploadBuffer.cpp" />
     <ClCompile Include="Vis.cpp" />
     <ClCompile Include="VisPolygon.cpp" />
+    <ClCompile Include="VisPolyline.cpp" />
+    <ClCompile Include="VisRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="BindableBase.idl" />

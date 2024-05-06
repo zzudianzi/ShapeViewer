@@ -1,20 +1,17 @@
 #pragma once
 
+#include "Rect.h"
 #include "Vis.h"
-#include "Polygon.h"
-
-#include <d2d1_3.h>
-#include <winrt/base.h>
 
 namespace ShapeViewer
 {
-class VisPolygon : public Vis
+class VisRect : public ::ShapeViewer::Vis
 {
   public:
-    explicit VisPolygon(const ShapeViewer::Polygon& polygon);
+    explicit VisRect(const ::ShapeViewer::Rect& rect);
 
-    ShapeViewer::Polygon& Polygon();
-    const ShapeViewer::Polygon& Polygon() const;
+    ::ShapeViewer::Rect& Rect();
+    const ::ShapeViewer::Rect& Rect() const;
 
     bool CreateD2DFigure();
     void Draw() override;
@@ -22,7 +19,7 @@ class VisPolygon : public Vis
     std::optional<::ShapeViewer::Rect> BoundingRect() const override;
 
   private:
-    ShapeViewer::Polygon _Polygon;
+    ::ShapeViewer::Rect _Rect;
     winrt::com_ptr<ID2D1PathGeometry> _D2D1Gemoetry;
 };
 } // namespace ShapeViewer

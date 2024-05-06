@@ -91,19 +91,7 @@ bool ROIPolygon::PtInShape(const Point& pt) const
 
 bool ROIPolygon::PtNearBoundary(const Point& pt, double maxDis) const
 {
-    const auto& vertices = GetPolygon().GetVertices();
-    int size = (int)vertices.size();
-    for (int i = 0; i < size; i++)
-    {
-        const auto& pt1 = vertices[(i + size - 1) % size];
-        const auto& pt2 = vertices[i];
-        if (Math::PointNearLineSegment(pt, pt1, pt2, maxDis))
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return Math::PointNearBoundary(pt, GetPolygon().GetVertices(), maxDis);
 }
 
 void ROIPolygon::DragMark(int selectedMark, const Point& oriPos, const Point& curPos, const ROI& oriROI)
@@ -137,18 +125,29 @@ void ROIPolygon::DragMark(int selectedMark, const Point& oriPos, const Point& cu
     }
 }
 
-bool ROIPolygon::Draw(ID2D1RenderTarget* rt, ID2D1SolidColorBrush* brush, const D2D1::Matrix3x2F& transform)
+bool ROIPolygon::Draw()
 {
-    _VisPolygon.Draw(rt, brush);
+    auto display = GetVis().GetDisplay();
+    auto brush = display->Brush();
+    auto rt = display->RenderTarget();
+    auto transform = display->TransformToWindow();
+    _VisPolygon.Draw();
     if (_DrawMark)
     {
-        brush->SetColor(D2D1::ColorF(D2D1::ColorF::Yellow));
         auto markPositions = MarkPositions();
-        for (auto&& pos : markPositions)
+        for (int i = 0; i < markPositions.size(); i++)
         {
-            auto center =
-                D2D1::Ellipse(transform.TransformPoint(D2D1::Point2F((float)pos.X(), (float)pos.Y())), MarkRadius, MarkRadius);
-            rt->FillEllipse(center, brush);
+            auto color = D2D1::ColorF(D2D1::ColorF::Yellow);
+            if (i == (int)Mark::Center)
+            {
+                color = D2D1::ColorF(D2D1::ColorF::Green);
+            }
+            brush->SetColor(color);
+            auto center = D2D1::Ellipse(
+                transform.TransformPoint(D2D1::Point2F((float)markPositions[i].X(), (float)markPositions[i].Y())),
+                MarkRadius,
+                MarkRadius);
+            rt->FillEllipse(center, brush.get());
         }
     }
 

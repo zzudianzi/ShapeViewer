@@ -15,6 +15,8 @@
 
 #include "ROIPolygon.h"
 #include "Display.h"
+#include "ROIPolyline.h"
+#include "ROIRect.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -206,22 +208,20 @@ IAsyncAction MainWindow::btnLoadPolyline_Click(IInspectable const& sender, Route
         co_return;
     }
 
-    winrt::hstring jsonString = co_await FileIO::ReadTextAsync(file);
-
-    auto polyline = ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
-
-    auto& display = _d3dApp->GetDisplay();
-
-    ::ShapeViewer::Polygon polygon;
-    for (auto&& pt : polyline.Points())
+    winrt::hstring jsonString;
+    try
     {
-        ::ShapeViewer::Point point{pt._Pos.x, pt._Pos.z};
-        auto& vertices = polygon.GetVertices();
-        vertices.push_back(point);
+        jsonString = co_await FileIO::ReadTextAsync(file);
+        auto polyline = ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
+        auto& display = _d3dApp->GetDisplay();
+        auto roi = new ::ShapeViewer::ROIPolyline(polyline);
+        display.AddROI(roi);
     }
-
-    auto roi = new ::ShapeViewer::ROIPolygon(polygon);
-    display.AddROI(roi);
+    catch (const hresult_error& ex)
+    {
+        winrt::hresult hr = ex.code();
+        winrt::hstring message = ex.message();
+    }
 }
 
 void MainWindow::btnFit_Click(IInspectable const& sender, RoutedEventArgs const& e)
