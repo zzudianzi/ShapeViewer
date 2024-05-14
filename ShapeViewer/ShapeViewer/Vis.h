@@ -1,6 +1,7 @@
 #pragma once
 
 #include <d2d1_3.h>
+#include <dwrite.h>
 #include "Rect.h"
 
 #include <optional>

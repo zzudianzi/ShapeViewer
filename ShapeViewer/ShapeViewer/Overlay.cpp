@@ -40,6 +40,7 @@ void Overlay::AddItem(Geometry* geometry)
 void Overlay::AddItem(Vis* vis)
 {
     _Items.push_back(vis);
+    vis->SetDisplay(_Display);
 }
 
 Vis* Overlay::GetItem(int index)
@@ -87,4 +88,12 @@ void Overlay::DeleteAllItems()
 int Overlay::GetItemCount()
 {
     return (int)_Items.size();
+}
+
+void Overlay::Draw()
+{
+    for (auto&& vis : _Items)
+    {
+        vis->Draw();
+    }
 }

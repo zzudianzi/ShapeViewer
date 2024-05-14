@@ -17,6 +17,8 @@
 #include "Display.h"
 #include "ROIPolyline.h"
 #include "ROIRect.h"
+#include "Overlay.h"
+#include "VisText.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -78,6 +80,12 @@ void MainWindow::swapChainPanel_Loaded(IInspectable const& sender, RoutedEventAr
     _d3dApp.reset(new ::ShapeViewer::BoxApp(swapChainPanel().as<ISwapChainPanelNative>()));
     _d3dApp->InitDirect3D();
     _d3dApp->OnResize(swapChainPanel().ActualWidth(), swapChainPanel().ActualHeight());
+
+    auto& display = _d3dApp->GetDisplay();
+    auto overlay = display.CreateOverlay(false);
+
+    _Text = new ::ShapeViewer::VisText(L"");
+    overlay->AddItem(_Text);
 
     _RenderingToken = CompositionTarget::Rendering({this, &MainWindow::swapChainPanel_RenderingHandler});
 }
@@ -166,6 +174,11 @@ void MainWindow::swapChainPanel_PointerMoved(IInspectable const& sender, Pointer
     {
         btnState |= MK_RBUTTON;
     }
+
+    auto& display = _d3dApp->GetDisplay();
+    auto pt = display.ToScenePoint(position.X, position.Y);
+
+    _Text->Text() = std::format(L"MousePosition X:{0:.2f} Y:{1:.2f}", pt.X(), pt.Y());
 
     _d3dApp->OnMouseMove(btnState, position.X, position.Y);
 }

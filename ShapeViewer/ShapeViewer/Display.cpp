@@ -86,7 +86,9 @@ bool Display::FitSize()
 
 Overlay* Display::CreateOverlay(bool scaling)
 {
-    throw;
+    auto overlay = new Overlay(this, scaling);
+    _Overlays.push_back(overlay);
+    return overlay;
 }
 
 bool Display::DeleteOverlay(Overlay* overlay)
@@ -217,6 +219,11 @@ void Display::TransformToWindow(const D2D1::Matrix3x2F& value)
 
 void Display::Draw()
 {
+    for (auto&& overlay : _Overlays)
+    {
+        overlay->Draw();
+    }
+
     for (auto&& roi : _ROIs)
     {
         roi->Draw();
@@ -390,6 +397,26 @@ const winrt::com_ptr<ID2D1Factory3>& Display::D2D1Factory() const
 winrt::com_ptr<ID2D1Factory3>& Display::D2D1Factory()
 {
     return _D2D1Factory;
+}
+
+const winrt::com_ptr<IDWriteFactory>& Display::DWriteFactory() const
+{
+    return _DWriteFactory;
+}
+
+winrt::com_ptr<IDWriteFactory>& Display::DWriteFactory()
+{
+    return _DWriteFactory;
+}
+
+const winrt::com_ptr<IDWriteTextFormat>& Display::DWriteTextFormat() const
+{
+    return _TextFormat;
+}
+
+winrt::com_ptr<IDWriteTextFormat>& Display::DWriteTextFormat()
+{
+    return _TextFormat;
 }
 
 const winrt::com_ptr<ID2D1RenderTarget>& Display::RenderTarget() const

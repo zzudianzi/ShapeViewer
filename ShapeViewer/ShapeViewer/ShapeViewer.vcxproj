@@ -162,6 +162,7 @@
     <ClInclude Include="VisPolygon.h" />
     <ClInclude Include="VisPolyline.h" />
     <ClInclude Include="VisRect.h" />
+    <ClInclude Include="VisText.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -208,6 +209,7 @@
     <ClCompile Include="VisPolygon.cpp" />
     <ClCompile Include="VisPolyline.cpp" />
     <ClCompile Include="VisRect.cpp" />
+    <ClCompile Include="VisText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="BindableBase.idl" />

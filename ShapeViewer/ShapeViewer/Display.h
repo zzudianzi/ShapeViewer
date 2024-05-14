@@ -56,6 +56,10 @@ class Display
 
     const winrt::com_ptr<ID2D1Factory3>& D2D1Factory() const;
     winrt::com_ptr<ID2D1Factory3>& D2D1Factory();
+    const winrt::com_ptr<IDWriteFactory>& DWriteFactory() const;
+    winrt::com_ptr<IDWriteFactory>& DWriteFactory();
+    const winrt::com_ptr<IDWriteTextFormat>& DWriteTextFormat() const;
+    winrt::com_ptr<IDWriteTextFormat>& DWriteTextFormat();
     const winrt::com_ptr<ID2D1RenderTarget>& RenderTarget() const;
     winrt::com_ptr<ID2D1RenderTarget>& RenderTarget();
     const winrt::com_ptr<ID2D1SolidColorBrush>& Brush() const;
@@ -88,6 +92,8 @@ class Display
     // D2D
     winrt::com_ptr<ID2D1Factory3> _D2D1Factory;
     winrt::com_ptr<ID2D1RenderTarget> _D2D1RenderTarget;
+    winrt::com_ptr<IDWriteFactory> _DWriteFactory;
+    winrt::com_ptr<IDWriteTextFormat> _TextFormat;
     winrt::com_ptr<ID2D1SolidColorBrush> _Brush;
 };
 } // namespace ShapeViewer

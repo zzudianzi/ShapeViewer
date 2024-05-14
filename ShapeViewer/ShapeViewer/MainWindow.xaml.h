@@ -4,6 +4,7 @@
 
 #include "d3dApp.h"
 #include "GameTimer.h"
+#include "VisText.h"
 
 namespace winrt::ShapeViewer::implementation
 {
@@ -26,6 +27,8 @@ struct MainWindow : MainWindowT<MainWindow>
     winrt::hstring _WindowTitle;
 
     bool _WindowClosed = false;
+
+    ::ShapeViewer::VisText* _Text = nullptr;
 
     winrt::ShapeViewer::MainWindowViewModel _ViewModel{nullptr};
 

@@ -10,6 +10,7 @@ class Geometry;
 class Overlay
 {
   public:
+    Overlay(Display* display, bool scaling = true);
     virtual ~Overlay();
 
     bool Visible() const;
@@ -30,8 +31,9 @@ class Overlay
 
     int GetItemCount();
 
+    void Draw();
+
   private:
-    Overlay(Display* display, bool scaling = true);
     std::vector<Vis*> _Items;
     Display* _Display;
 
@@ -39,7 +41,5 @@ class Overlay
     bool _Scaling;
 
     int _ZOrder = 0;
-
-    friend class Dispaly;
 };
 } // namespace ShapeViewer

@@ -91,6 +91,9 @@
     <ClCompile Include="ROIRect.cpp">
       <Filter>ROI</Filter>
     </ClCompile>
+    <ClCompile Include="VisText.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -168,6 +171,9 @@
     </ClInclude>
     <ClInclude Include="ROIRect.h">
       <Filter>ROI</Filter>
+    </ClInclude>
+    <ClInclude Include="VisText.h">
+      <Filter>Vis</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

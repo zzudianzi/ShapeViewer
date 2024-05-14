@@ -70,7 +70,7 @@ bool D2DWrapper::InitDirect2D(winrt::com_ptr<ID3D12Device> device, winrt::com_pt
             DWRITE_FONT_WEIGHT_NORMAL,
             DWRITE_FONT_STYLE_NORMAL,
             DWRITE_FONT_STRETCH_NORMAL,
-            50,
+            30,
             L"en-us",
             _TextFormat.put()));
 
@@ -79,6 +79,8 @@ bool D2DWrapper::InitDirect2D(winrt::com_ptr<ID3D12Device> device, winrt::com_pt
     }
 
     _Display.D2D1Factory() = _D2D1Factory;
+    _Display.DWriteFactory() = _DWriteFactory;
+    _Display.DWriteTextFormat() = _TextFormat;
     _Display.RenderTarget() = _D2D1Context;
     _Display.Brush() = _Brush;
 
@@ -137,6 +139,7 @@ void D2DWrapper::Draw(int bufferIndex)
     _D2D1Context->BeginDraw();
     _D2D1Context->SetTransform(D2D1::Matrix3x2F::Identity());
     _Display.Draw();
+    //_D2D1Context->DrawTextW(text, _countof(text) - 1, _TextFormat.get(), &textRect, _Brush.get());
     winrt::check_hresult(_D2D1Context->EndDraw());
 
     // Release our wrapped render target resource. Releasing
