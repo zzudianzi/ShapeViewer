@@ -66,6 +66,7 @@ class Display
     winrt::com_ptr<ID2D1SolidColorBrush>& Brush();
 
     ::ShapeViewer::Point ToScenePoint(int x, int y) const;
+    ::ShapeViewer::Point ToScenePoint(float x, float y) const;
     ::ShapeViewer::Point ToScenePoint(const ::ShapeViewer::Point& pt) const;
 
     static constexpr double NearRadius = 5.;

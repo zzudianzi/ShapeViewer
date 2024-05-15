@@ -360,11 +360,16 @@ void Display::OnMouseWheel(WPARAM btnState, int x, int y, int delta)
     UpdateTransformToWindow();
 }
 
-::ShapeViewer::Point Display::ToScenePoint(int x, int y) const
+::ShapeViewer::Point Display::ToScenePoint(float x, float y) const
 {
-    auto pointer = D2D1::Point2F((float)x, (float)y);
+    auto pointer = D2D1::Point2F(x, y);
     auto pointerInScene = _TransformToScene.TransformPoint(pointer);
     return {pointerInScene.x, pointerInScene.y};
+}
+
+::ShapeViewer::Point Display::ToScenePoint(int x, int y) const
+{
+    return ToScenePoint((float)x, (float)y);
 }
 
 ::ShapeViewer::Point Display::ToScenePoint(const ::ShapeViewer::Point& pt) const

@@ -178,7 +178,7 @@ void MainWindow::swapChainPanel_PointerMoved(IInspectable const& sender, Pointer
     auto& display = _d3dApp->GetDisplay();
     auto pt = display.ToScenePoint(position.X, position.Y);
 
-    _Text->Text() = std::format(L"MousePosition X:{0:.2f} Y:{1:.2f}", pt.X(), pt.Y());
+    _Text->Text() = std::format(L"MousePosition X:{0:.3f} Y:{1:.3f}", pt.X(), pt.Y());
 
     _d3dApp->OnMouseMove(btnState, position.X, position.Y);
 }
