@@ -53,6 +53,12 @@ class D3DApp
     const Display& GetDisplay() const;
     Display& GetDisplay();
 
+    bool Show2D() const;
+    void Show2D(bool value);
+
+    bool Show3D() const;
+    void Show3D(bool value);
+
   protected:
     void CreateCommandObjects();
     void CreateSwapChain();
@@ -105,6 +111,9 @@ class D3DApp
     D3D12_RECT _ScissorRect;
 
     D2DWrapper _D2DWrapper;
+
+    bool _Draw2D;
+    bool _Draw3D;
 };
 
 } // namespace ShapeViewer

@@ -100,27 +100,36 @@ void BoxApp::Draw()
 
     _CommandList->SetGraphicsRootSignature(_RootSignature.get());
 
-    auto vertexBufferView = _BoxGeometry->VertexBufferView();
-    auto indexBufferView = _BoxGeometry->IndexBufferView();
-    _CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-    _CommandList->IASetIndexBuffer(&indexBufferView);
-    _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+    if (_Draw3D)
+    {
+        auto vertexBufferView = _BoxGeometry->VertexBufferView();
+        auto indexBufferView = _BoxGeometry->IndexBufferView();
+        _CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+        _CommandList->IASetIndexBuffer(&indexBufferView);
+        _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
-    _CommandList->SetGraphicsRootDescriptorTable(0, _CBVHeap->GetGPUDescriptorHandleForHeapStart());
+        _CommandList->SetGraphicsRootDescriptorTable(0, _CBVHeap->GetGPUDescriptorHandleForHeapStart());
 
-    _CommandList->DrawIndexedInstanced(_BoxGeometry->_DrawArgs["box"]._IndexCount, 1, 0, 0, 0);
+        _CommandList->DrawIndexedInstanced(_BoxGeometry->_DrawArgs["box"]._IndexCount, 1, 0, 0, 0);
+    }
 
-   /* auto transitionPresent = CD3DX12_RESOURCE_BARRIER::Transition(
-        CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    if (!_Draw2D)
+    {
+        auto transitionPresent = CD3DX12_RESOURCE_BARRIER::Transition(
+            CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-    _CommandList->ResourceBarrier(1, &transitionPresent);*/
-
+        _CommandList->ResourceBarrier(1, &transitionPresent);
+    }
+    
     winrt::check_hresult(_CommandList->Close());
 
     ID3D12CommandList* cmdsLists[] = {_CommandList.get()};
     _CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-    D3DApp::Draw2D();
+    if (_Draw2D)
+    {
+        D3DApp::Draw2D();
+    }
 
     winrt::check_hresult(_SwapChain->Present(0, 0));
     _CurrentBackBuffer = (_CurrentBackBuffer + 1) % _SwapChainBufferCount;

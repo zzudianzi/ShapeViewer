@@ -31,7 +31,7 @@ ShapeViewer::Polyline JsonHelper::ReadJson(const std::wstring& jsonString)
     for (int i = 0; i < elementNum; i++)
     {
         JsonObject vertice = array.GetAt(i).GetObjectW();
-        vertices[i] = {vertice.GetNamedNumber(L"x"), vertice.GetNamedNumber(L"z")};
+        vertices[i] = {vertice.GetNamedNumber(L"x"), vertice.GetNamedNumber(L"y")};
     }
 
     return polyline;

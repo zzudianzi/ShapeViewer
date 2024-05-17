@@ -68,7 +68,7 @@ void MainWindow::CalculateFrameStats()
 
         std::wstring windowText = L"ShapeViwer....fps: " + fpsStr + L"   mspf: " + mspfStr;
 
-        //Title(windowText.c_str());
+        // Title(windowText.c_str());
 
         frameCount = 0;
         timeEplapsed += 1.;
@@ -86,6 +86,11 @@ void MainWindow::swapChainPanel_Loaded(IInspectable const& sender, RoutedEventAr
 
     _Text = new ::ShapeViewer::VisText(L"");
     overlay->AddItem(_Text);
+
+    auto mainViewModel = _ViewModel.as<winrt::ShapeViewer::implementation::MainWindowViewModel>();
+    mainViewModel->Show2D(_d3dApp->Show2D());
+    mainViewModel->Show3D(_d3dApp->Show3D());
+    mainViewModel->App(_d3dApp.get());
 
     _RenderingToken = CompositionTarget::Rendering({this, &MainWindow::swapChainPanel_RenderingHandler});
 }
@@ -248,4 +253,11 @@ void MainWindow::swapChainPanel_PointerWheelChanged(IInspectable const& sender, 
     auto position = pointerPoint.Position();
 
     _d3dApp->OnMouseWheel(0, position.X, position.Y, pointerPoint.Properties().MouseWheelDelta());
+}
+
+void winrt::ShapeViewer::implementation::MainWindow::btnClear_Click(
+    winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    auto& display = _d3dApp->GetDisplay();
+    display.DeleteAllROIs();
 }

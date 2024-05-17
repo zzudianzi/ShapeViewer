@@ -34,6 +34,12 @@
                 x:Name="btnFit"
                 Click="btnFit_Click"
                 Content="Fit" />
+            <Button
+                x:Name="btnClear"
+                Click="btnClear_Click"
+                Content="Clear" />
+            <CheckBox Content="Show 2D" IsChecked="{x:Bind ViewModel.Show2D, Mode=TwoWay}" />
+            <CheckBox Content="Show 3D" IsChecked="{x:Bind ViewModel.Show3D, Mode=TwoWay}" />
         </StackPanel>
     </Grid>
 </Window>

@@ -5,7 +5,8 @@
 
 using namespace ShapeViewer;
 
-D3DApp::D3DApp(winrt::com_ptr<ISwapChainPanelNative> panelNative) : _D2DWrapper(_SwapChainBufferCount)
+D3DApp::D3DApp(winrt::com_ptr<ISwapChainPanelNative> panelNative)
+    : _D2DWrapper(_SwapChainBufferCount), _Draw2D(true), _Draw3D(true)
 {
     _PanelNative = panelNative;
 }
@@ -311,4 +312,24 @@ const Display& D3DApp::GetDisplay() const
 Display& D3DApp::GetDisplay()
 {
     return _D2DWrapper.GetDisplay();
+}
+
+bool D3DApp::Show2D() const
+{
+    return _Draw2D;
+}
+
+void D3DApp::Show2D(bool value)
+{
+    _Draw2D = value;
+}
+
+bool D3DApp::Show3D() const
+{
+    return _Draw3D;
+}
+
+void D3DApp::Show3D(bool value)
+{
+    _Draw3D = value;
 }

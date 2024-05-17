@@ -56,6 +56,23 @@ bool Display::FitSize()
     double sceneWidth = rect->Ed().X() - rect->St().X();
     double sceneHeight = rect->Ed().Y() - rect->St().Y();
 
+    if (sceneWidth < Math::Epsilon)
+    {
+        auto midX = (rect->Ed().X() + rect->St().X()) * 0.5;
+        rect->St().X(midX - 0.5);
+        rect->Ed().X(midX + 0.5);
+    }
+
+    if (sceneHeight < Math::Epsilon)
+    {
+        auto midY = (rect->Ed().Y() + rect->St().Y()) * 0.5;
+        rect->St().Y(midY - 0.5);
+        rect->Ed().Y(midY + 0.5);
+    }
+
+    sceneWidth = rect->Ed().X() - rect->St().X();
+    sceneHeight = rect->Ed().Y() - rect->St().Y();
+
     if (sceneHeight < Math::Epsilon || sceneWidth < Math::Epsilon || size.width < 10. || size.height < 10.)
     {
         return false;

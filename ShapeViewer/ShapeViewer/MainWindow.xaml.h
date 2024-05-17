@@ -58,13 +58,17 @@ struct MainWindow : MainWindowT<MainWindow>
     void Window_Closed(
         winrt::Windows::Foundation::IInspectable const& sender,
         winrt::Microsoft::UI::Xaml::WindowEventArgs const& args);
+
     winrt::Windows::Foundation::IAsyncAction btnLoadPolyline_Click(
         winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+
     void btnFit_Click(
         winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     void swapChainPanel_PointerWheelChanged(
         winrt::Windows::Foundation::IInspectable const& sender,
         winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+    void btnClear_Click(
+        winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 };
 } // namespace winrt::ShapeViewer::implementation
 
