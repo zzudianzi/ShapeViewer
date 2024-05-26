@@ -19,6 +19,8 @@
 #include "ROIRect.h"
 #include "Overlay.h"
 #include "VisText.h"
+#include "VisPoint.h"
+#include "ROIPoint.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -209,6 +211,17 @@ void MainWindow::Window_Closed(IInspectable const& sender, WindowEventArgs const
 
 IAsyncAction MainWindow::btnLoadPolyline_Click(IInspectable const& sender, RoutedEventArgs const& e)
 {
+    auto& display = _d3dApp->GetDisplay();
+    auto overlay = display.CreateOverlay();
+    ::ShapeViewer::VisPoint* visPoint = new ::ShapeViewer::VisPoint(::ShapeViewer::Point(100, 100));
+    ::ShapeViewer::VisPoint* v1 = new ::ShapeViewer::VisPoint(*visPoint);
+    overlay->AddItem(visPoint);
+
+    auto roi = new ::ShapeViewer::ROIPoint(::ShapeViewer::Point(100, 100));
+    display.AddROI(roi);
+
+    co_return;
+
     winrt::Windows::Storage::Pickers::FileOpenPicker picker;
     auto windowNative{this->m_inner.as<IWindowNative>()};
     HWND hWnd{0};

@@ -186,7 +186,8 @@ void ROIRect::DragMark(int selectedMark, const Point& oriPos, const Point& curPo
                 GetRect().Angle(angle);
                 auto angleRotate = GetRect().Angle() - oriROIRect->GetRect().Angle();
 
-                D2D1::Matrix3x2F mat = D2D1::Matrix3x2F::Rotation(angleRotate * 180. / DirectX::XM_PI, D2D1::Point2F(center.X(), center.Y()));
+                D2D1::Matrix3x2F mat = D2D1::Matrix3x2F::Rotation(
+                    angleRotate * 180. / DirectX::XM_PI, D2D1::Point2F(center.X(), center.Y()));
 
                 const auto& topLeft = markPositions[static_cast<int>(Mark::TopLeft)];
                 const auto& bottomRight = markPositions[static_cast<int>(Mark::BottomRight)];

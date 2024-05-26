@@ -94,6 +94,24 @@
     <ClCompile Include="VisText.cpp">
       <Filter>Vis</Filter>
     </ClCompile>
+    <ClCompile Include="VisCircle.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="VisEllipse.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="ROICircle.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
+    <ClCompile Include="ROIEllipse.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
+    <ClCompile Include="VisPoint.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="ROIPoint.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -174,6 +192,27 @@
     </ClInclude>
     <ClInclude Include="VisText.h">
       <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="VisCircle.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="VisEllipse.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="ROICircle.h">
+      <Filter>ROI</Filter>
+    </ClInclude>
+    <ClInclude Include="ROIEllipse.h">
+      <Filter>ROI</Filter>
+    </ClInclude>
+    <ClInclude Include="VisPoint.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="ROIPoint.h">
+      <Filter>ROI</Filter>
+    </ClInclude>
+    <ClInclude Include="TemplateHelper.hpp">
+      <Filter>Infrastructure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

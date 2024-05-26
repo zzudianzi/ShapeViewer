@@ -7,7 +7,7 @@
 
 namespace ShapeViewer::Math
 {
-constexpr double Epsilon = 1e-5;
+constexpr double Epsilon = 1e-8;
 void CalcLineByPointAndAngle(double x, double y, double angle, double& a, double& b, double& c);
 void CalcLineByPointAndAngle(const Point& pt, double angle, double& a, double& b, double& c);
 bool CalcLineByTwoPoints(double x1, double y1, double x2, double y2, double& a, double& b, double& c);

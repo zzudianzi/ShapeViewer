@@ -16,8 +16,9 @@ class Polygon : public Geometry
 
     Polygon(const Polygon& obj);
     Polygon& operator=(const Polygon& polygon);
-
-    bool operator==(const Geometry& obj) const override;
+    bool operator==(const Polygon& obj) const;
+    
+    bool Equal(const Geometry& obj) const override;
     bool Copy(const Geometry& obj) override;
     Polygon* Clone() const override;
 

@@ -18,12 +18,13 @@ class Point : public Geometry
     void Y(double value);
 
     Point& operator=(const Point& obj);
-    bool operator==(const Geometry& obj) const override;
+    bool operator==(const Point& obj) const;
 
     Point operator*(double value) const;
     Point operator+(const Point& obj) const;
     Point operator-(const Point& obj) const;
 
+    bool Equal(const Geometry& obj) const override;
     bool Copy(const Geometry& obj) override;
     Point* Clone() const override;
 
@@ -31,7 +32,5 @@ class Point : public Geometry
     double _X;
     double _Y;
 };
-
-bool operator==(const Point& l, const Point& r);
 
 } // namespace ShapeViewer

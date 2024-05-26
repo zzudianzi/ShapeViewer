@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Point.h"
 #include "MathTool.h"
+#include "TemplateHelper.hpp"
 
 using namespace ShapeViewer;
 
 Point::Point() : _X(0.), _Y(0.)
 {
-    
 }
 
 Point::Point(double x, double y)
@@ -28,20 +28,14 @@ Point& Point::operator=(const Point& obj)
     return *this;
 }
 
-bool Point::operator==(const Geometry& obj) const
+bool Point::operator==(const Point& obj) const
 {
-    auto object = dynamic_cast<const Point*>(&obj);
-    if (!object)
-    {
-        return false;
-    }
+    return std::abs(_X - obj._X) < Math::Epsilon && std::abs(_Y - obj._Y) < Math::Epsilon;
+}
 
-    if (this == object)
-    {
-        return true;
-    }
-
-    return std::abs(_X - object->_X) < Math::Epsilon && std::abs(_Y - object->_Y) < Math::Epsilon;
+bool Point::Equal(const Geometry& obj) const
+{
+    return ShapeViewer::Equal(*this, obj);
 }
 
 bool Point::Copy(const Geometry& obj)
@@ -100,9 +94,4 @@ Point Point::operator+(const Point& obj) const
 Point Point::operator-(const Point& obj) const
 {
     return {_X - obj._X, _Y - obj._Y};
-}
-
-bool ShapeViewer::operator == (const Point& l, const Point& r)
-{
-    return l.operator==(r);
 }

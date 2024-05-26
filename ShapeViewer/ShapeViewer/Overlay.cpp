@@ -12,6 +12,21 @@ Overlay::~Overlay()
     DeleteAllItems();
 }
 
+Display* Overlay::GetDisplay()
+{
+    return _Display;
+}
+
+const Display* Overlay::GetDisplay() const
+{
+    return _Display;
+}
+
+void Overlay::SetDisplay(Display* display)
+{
+    _Display = display;
+}
+
 bool Overlay::Visible() const
 {
     return _Visible;

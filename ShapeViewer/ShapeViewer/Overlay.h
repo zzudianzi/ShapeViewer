@@ -13,6 +13,10 @@ class Overlay
     Overlay(Display* display, bool scaling = true);
     virtual ~Overlay();
 
+    Display* GetDisplay();
+    const Display* GetDisplay() const;
+    void SetDisplay(Display* display);
+
     bool Visible() const;
     void Visible(bool value);
 

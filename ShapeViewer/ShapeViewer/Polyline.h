@@ -18,8 +18,9 @@ class Polyline : public Geometry
 
     Polyline(const Polyline& obj);
     Polyline& operator=(const Polyline& Polyline);
+    bool operator==(const Polyline& obj) const;
 
-    bool operator==(const Geometry& obj) const override;
+    bool Equal(const Geometry& obj) const override;
     bool Copy(const Geometry& obj) override;
     Polyline* Clone() const override;
 

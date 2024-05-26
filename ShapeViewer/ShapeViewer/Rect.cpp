@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Rect.h"
+#include "TemplateHelper.hpp"
 
 #include "MathTool.h"
 
@@ -61,7 +62,7 @@ const Point& Rect::Ed() const
 
 Point Rect::Center() const
 {
-    return Point((_St.X() + _Ed.X()) * 0.5, (_St.Y() + _Ed.Y()) * 0.5);
+    return {(_St.X() + _Ed.X()) * 0.5, (_St.Y() + _Ed.Y()) * 0.5};
 }
 
 double Rect::Angle() const
@@ -138,48 +139,24 @@ void Rect::SetRectByCorners(
     _Angle = std::atan2(rightCenter.Y() - leftCenter.Y(), rightCenter.X() - leftCenter.X());
 }
 
-bool Rect::operator==(const Geometry& obj) const
+bool Rect::operator==(const Rect& obj) const
 {
-    auto object = dynamic_cast<const Rect*>(&obj);
-    if (!object)
-    {
-        return false;
-    }
+    return _St == obj._St && _Ed == obj._Ed && Math::FuzzyCompare(_Angle, obj._Angle);
+}
 
-    if (this == object)
-    {
-        return true;
-    }
-
-    return _St == object->_St && _Ed == object->_Ed && Math::FuzzyCompare(_Angle, object->_Angle);
+bool Rect::Equal(const Geometry& obj) const
+{
+    return ShapeViewer::Equal(*this, obj);
 }
 
 bool Rect::Copy(const Geometry& obj)
 {
-    auto object = dynamic_cast<const Rect*>(&obj);
-    if (!object)
-    {
-        return false;
-    }
-
-    if (this == object)
-    {
-        return true;
-    }
-
-    *this = *object;
-
-    return true;
+    return ShapeViewer::Copy(*this, obj);
 }
 
 Rect* Rect::Clone() const
 {
-    return new Rect(*this);
-}
-
-bool ShapeViewer::operator==(const Rect& l, const Rect& r)
-{
-    return l.operator==(r);
+    return ShapeViewer::Clone(*this);
 }
 
 Rect Rect::operator|(const Rect& rc)

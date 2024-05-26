@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "Polyline.h"
+#include "TemplateHelper.hpp"
 
 using namespace ShapeViewer;
 
@@ -30,43 +31,24 @@ ShapeViewer::Polyline& Polyline::operator=(const Polyline& Polyline)
     return *this;
 }
 
-bool Polyline::operator==(const Geometry& obj) const
+bool Polyline::operator==(const Polyline& obj) const
 {
-    auto object = dynamic_cast<const Polyline*>(&obj);
-    if (!object)
-    {
-        return false;
-    }
+    return _Vertices == obj._Vertices;
+}
 
-    if (this == object)
-    {
-        return true;
-    }
-
-    return _Vertices == object->_Vertices;
+bool Polyline::Equal(const Geometry& obj) const
+{
+    return ShapeViewer::Equal(*this, obj);
 }
 
 bool Polyline::Copy(const Geometry& obj)
 {
-    auto object = dynamic_cast<const Polyline*>(&obj);
-    if (!object)
-    {
-        return false;
-    }
-
-    if (this == object)
-    {
-        return true;
-    }
-
-    *this = *object;
-
-    return true;
+    return ShapeViewer::Copy(*this, obj);
 }
 
 ShapeViewer::Polyline* Polyline::Clone() const
 {
-    return new Polyline(*this);
+    return ShapeViewer::Clone(*this);
 }
 
 Polyline::Vertices& Polyline::GetVertices()

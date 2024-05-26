@@ -104,6 +104,7 @@ bool Display::FitSize()
 Overlay* Display::CreateOverlay(bool scaling)
 {
     auto overlay = new Overlay(this, scaling);
+    overlay->SetDisplay(this);
     _Overlays.push_back(overlay);
     return overlay;
 }

@@ -14,6 +14,8 @@ class Rect : public Geometry
     Rect(Point st, Point ed, double angle = 0.);
     explicit Rect(const Rect& obj);
 
+    bool operator==(const Rect& obj) const;
+
     enum class Corner
     {
         TopLeft,
@@ -43,7 +45,7 @@ class Rect : public Geometry
     void SetRectByCorners(
         const Point& topLeft, const Point& topRight, const Point& bottomRight, const Point& bottomLeft);
 
-    bool operator==(const Geometry& obj) const override;
+    bool Equal(const Geometry& obj) const override;
     bool Copy(const Geometry& obj) override;
     Rect* Clone() const override;
 
@@ -56,6 +58,4 @@ class Rect : public Geometry
     Point _Ed;
     double _Angle;
 };
-
-bool operator==(const Rect& l, const Rect& r);
 } // namespace ShapeViewer

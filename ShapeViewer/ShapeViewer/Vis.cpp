@@ -10,6 +10,21 @@ Vis::Vis() : _Visible(true), _Display(nullptr)
     _Color = D2D1::ColorF(D2D1::ColorF::SkyBlue);
 }
 
+Vis::Vis(const Vis& vis) : _Visible(vis._Visible), _Display(vis.GetDisplay()), _Color(vis.Color())
+{
+
+}
+
+bool Vis::Visible() const
+{
+    return _Visible;
+}
+
+void Vis::Visible(bool value)
+{
+    _Visible = value;
+}
+
 D2D1_COLOR_F Vis::Color() const
 {
     return _Color;
@@ -25,7 +40,7 @@ Display* Vis::GetDisplay()
     return _Display;
 }
 
-const Display* Vis::GetDisplay() const
+Display* Vis::GetDisplay() const
 {
     return _Display;
 }

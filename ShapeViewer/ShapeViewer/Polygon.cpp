@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Polygon.h"
+#include "TemplateHelper.hpp"
 
 using namespace ShapeViewer;
 
@@ -29,43 +30,24 @@ ShapeViewer::Polygon& Polygon::operator=(const Polygon& polygon)
     return *this;
 }
 
-bool Polygon::operator==(const Geometry& obj) const
+bool Polygon::operator==(const Polygon& obj) const
 {
-    auto object = dynamic_cast<const Polygon*>(&obj);
-    if (!object)
-    {
-        return false;
-    }
+    return _Vertices == obj._Vertices;
+}
 
-    if (this == object)
-    {
-        return true;
-    }
-
-    return _Vertices == object->_Vertices;
+bool Polygon::Equal(const Geometry& obj) const
+{
+    return ShapeViewer::Equal(*this, obj);
 }
 
 bool Polygon::Copy(const Geometry& obj)
 {
-    auto object = dynamic_cast<const Polygon*>(&obj);
-    if (!object)
-    {
-        return false;
-    }
-
-    if (this == object)
-    {
-        return true;
-    }
-
-    *this = *object;
-
-    return true;
+    return ShapeViewer::Copy(*this, obj);
 }
 
 ShapeViewer::Polygon* Polygon::Clone() const
 {
-    return new Polygon(*this);
+    return ShapeViewer::Clone(*this);
 }
 
 Polygon::Vertices& Polygon::GetVertices()
