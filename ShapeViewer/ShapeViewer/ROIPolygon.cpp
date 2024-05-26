@@ -77,13 +77,6 @@ void ROIPolygon::MarkPositions(std::vector<Point>& markPositions) const
     }
 }
 
-std::vector<Point> ROIPolygon::MarkPositions() const
-{
-    std::vector<Point> markPositions;
-    MarkPositions(markPositions);
-    return markPositions;
-}
-
 bool ROIPolygon::PtInShape(const Point& pt) const
 {
     throw;
@@ -97,7 +90,7 @@ bool ROIPolygon::PtNearBoundary(const Point& pt, double maxDis) const
 void ROIPolygon::DragMark(int selectedMark, const Point& oriPos, const Point& curPos, const ROI& oriROI)
 {
     const auto& oriROIPolygon = dynamic_cast<const ROIPolygon&>(oriROI);
-    auto markPositions = oriROIPolygon.MarkPositions();
+    auto markPositions = oriROIPolygon.ROI::MarkPositions();
     switch ((Mark)selectedMark)
     {
     case Mark::Center:
@@ -134,7 +127,7 @@ bool ROIPolygon::Draw()
     _VisPolygon.Draw();
     if (_DrawMark)
     {
-        auto markPositions = MarkPositions();
+        auto markPositions = ROI::MarkPositions();
         for (int i = 0; i < markPositions.size(); i++)
         {
             auto color = D2D1::ColorF(D2D1::ColorF::Yellow);

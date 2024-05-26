@@ -70,11 +70,11 @@ class Display
     ::ShapeViewer::Point ToScenePoint(const ::ShapeViewer::Point& pt) const;
 
     static constexpr double NearRadius = 5.;
+    double GetSceneScale() const;
+    double GetWindowScale() const;
 
   private:
     void UpdateTransformToWindow();
-    double GetSceneScale() const;
-    double GetWindowScale() const;
 
   private:
     std::vector<Overlay*> _Overlays;

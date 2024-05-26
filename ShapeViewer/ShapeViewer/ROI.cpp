@@ -59,3 +59,10 @@ void ROI::SetDisplay(Display* display)
 {
     GetVis().SetDisplay(display);
 }
+
+std::vector<Point> ROI::MarkPositions() const
+{
+    std::vector<Point> markPositions;
+    MarkPositions(markPositions);
+    return markPositions;
+}

@@ -112,6 +112,9 @@
     <ClCompile Include="ROIPoint.cpp">
       <Filter>ROI</Filter>
     </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -213,6 +216,9 @@
     </ClInclude>
     <ClInclude Include="TemplateHelper.hpp">
       <Filter>Infrastructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

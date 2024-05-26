@@ -26,20 +26,24 @@ class ROI
     D2D1_COLOR_F MarkColor() const;
     void MarkColor(D2D1_COLOR_F value);
 
-    virtual Point Center() const = 0;
-    virtual bool SamePos(const ROI& roi) const = 0;
+    virtual ::ShapeViewer::Point Center() const = 0;
+    virtual bool SamePos(const ::ShapeViewer::ROI& roi) const = 0;
     virtual void MarkPositions(std::vector<Point>& markPositions) const = 0;
-    virtual std::vector<Point> MarkPositions() const = 0;
-    virtual bool PtInShape(const Point& pt) const = 0;
-    virtual bool PtNearBoundary(const Point& pt, double maxDis) const = 0;
-    virtual void DragMark(int selectedMark, const Point& oriPos, const Point& curPos, const ROI& oriROI) = 0;
+    std::vector<::ShapeViewer::Point> MarkPositions() const;
+    virtual bool PtInShape(const ::ShapeViewer::Point& pt) const = 0;
+    virtual bool PtNearBoundary(const ::ShapeViewer::Point& pt, double maxDis) const = 0;
+    virtual void DragMark(
+        int selectedMark,
+        const ::ShapeViewer::Point& oriPos,
+        const ::ShapeViewer::Point& curPos,
+        const ::ShapeViewer::ROI& oriROI) = 0;
 
     virtual const Vis& GetVis() const = 0;
     virtual Vis& GetVis() = 0;
 
-    const Display* GetDisplay() const;
-    Display* GetDisplay();
-    void SetDisplay(Display* display);
+    const ::ShapeViewer::Display* GetDisplay() const;
+    ::ShapeViewer::Display* GetDisplay();
+    void SetDisplay(::ShapeViewer::Display* display);
 
     static constexpr double MarkRadius = 3.;
 

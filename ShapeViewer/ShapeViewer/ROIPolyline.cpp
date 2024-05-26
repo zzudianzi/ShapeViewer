@@ -76,13 +76,6 @@ void ROIPolyline::MarkPositions(std::vector<Point>& markPositions) const
     }
 }
 
-std::vector<Point> ROIPolyline::MarkPositions() const
-{
-    std::vector<Point> markPositions;
-    MarkPositions(markPositions);
-    return markPositions;
-}
-
 bool ROIPolyline::PtInShape(const Point& pt) const
 {
     throw;
@@ -108,7 +101,7 @@ bool ROIPolyline::PtNearBoundary(const Point& pt, double maxDis) const
 void ROIPolyline::DragMark(int selectedMark, const Point& oriPos, const Point& curPos, const ROI& oriROI)
 {
     const auto& oriROIPolyline = dynamic_cast<const ROIPolyline&>(oriROI);
-    auto markPositions = oriROIPolyline.MarkPositions();
+    auto markPositions = oriROIPolyline.ROI::MarkPositions();
     switch ((Mark)selectedMark)
     {
     case Mark::Center:
@@ -146,7 +139,7 @@ bool ROIPolyline::Draw()
     if (_DrawMark)
     {
         brush->SetColor(D2D1::ColorF(D2D1::ColorF::Yellow));
-        auto markPositions = MarkPositions();
+        auto markPositions = ROI::MarkPositions();
         for (int i = 0; i < markPositions.size(); i++)
         {
             auto color = D2D1::ColorF(D2D1::ColorF::Yellow);

@@ -108,13 +108,6 @@ void ROIRect::MarkPositions(std::vector<Point>& markPositions) const
     markPositions[static_cast<int>(Mark::BottomLeft)] = corners[static_cast<int>(Rect::Corner::BottomLeft)];
 }
 
-std::vector<Point> ROIRect::MarkPositions() const
-{
-    std::vector<Point> markPositions;
-    MarkPositions(markPositions);
-    return markPositions;
-}
-
 bool ROIRect::PtInShape(const Point& pt) const
 {
     return Math::PtInPolygon(pt, GetRect().Corners());
@@ -128,7 +121,7 @@ bool ROIRect::PtNearBoundary(const Point& pt, double maxDis) const
 void ROIRect::DragMark(int selectedMark, const Point& oriPos, const Point& curPos, const ROI& oriROI)
 {
     auto oriROIRect = dynamic_cast<const ROIRect*>(&oriROI);
-    auto markPositions = oriROIRect->MarkPositions();
+    auto markPositions = oriROIRect->ROI::MarkPositions();
     switch ((Mark)selectedMark)
     {
     case Mark::TopLeft:
@@ -293,7 +286,7 @@ bool ROIRect::Draw()
     GetVis().Draw();
     if (_DrawMark)
     {
-        auto markPositions = MarkPositions();
+        auto markPositions = ROI::MarkPositions();
         for (int i = 0; i < markPositions.size(); i++)
         {
             auto color = D2D1::ColorF(D2D1::ColorF::Yellow);
@@ -319,7 +312,7 @@ bool ROIRect::Draw()
 
 void ROIRect::UpdateAngle()
 {
-    auto markPositions = MarkPositions();
+    auto markPositions = ROI::MarkPositions();
     const auto& leftCenter = markPositions[static_cast<int>(Mark::Left)];
     const auto& rightCenter = markPositions[static_cast<int>(Mark::Right)];
     auto angle = std::atan2(rightCenter.Y() - leftCenter.Y(), rightCenter.X() - leftCenter.X());

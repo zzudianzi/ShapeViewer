@@ -21,6 +21,13 @@
 #include "VisText.h"
 #include "VisPoint.h"
 #include "ROIPoint.h"
+#include "VisCircle.h"
+#include "ROICircle.h"
+#include "VisEllipse.h"
+#include "ROIEllipse.h"
+#include "MathTool.h"
+
+#include <numbers>
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -213,12 +220,32 @@ IAsyncAction MainWindow::btnLoadPolyline_Click(IInspectable const& sender, Route
 {
     auto& display = _d3dApp->GetDisplay();
     auto overlay = display.CreateOverlay();
-    ::ShapeViewer::VisPoint* visPoint = new ::ShapeViewer::VisPoint(::ShapeViewer::Point(100, 100));
-    ::ShapeViewer::VisPoint* v1 = new ::ShapeViewer::VisPoint(*visPoint);
-    overlay->AddItem(visPoint);
+    auto visPoint = new ::ShapeViewer::VisPoint(::ShapeViewer::Point(100, 100));
+    auto v1 = new ::ShapeViewer::VisPoint(*visPoint);
+    auto visCircle = new ::ShapeViewer::VisCircle(::ShapeViewer::Circle(::ShapeViewer::Point(100, 100), 50));
+    overlay->AddItem(visCircle);
 
-    auto roi = new ::ShapeViewer::ROIPoint(::ShapeViewer::Point(100, 100));
-    display.AddROI(roi);
+    auto pointRoi = new ::ShapeViewer::ROIPoint(::ShapeViewer::Point(100, 100));
+    display.AddROI(pointRoi);
+    auto circleRoi = new ::ShapeViewer::ROICircle(::ShapeViewer::Circle(::ShapeViewer::Point(100, 100), 50));
+    display.AddROI(circleRoi);
+    auto ellipseRoi = new ::ShapeViewer::ROIEllipse(::ShapeViewer::Ellipse(::ShapeViewer::Point(100, 100), 100, 50, std::numbers::pi * 30. / 180.));
+    display.AddROI(ellipseRoi);
+
+    ::ShapeViewer::Point unitVector;
+    auto corners = ellipseRoi->ROI::MarkPositions();
+    ::ShapeViewer::Math::UnitVector(
+        corners[(int)::ShapeViewer::ROIEllipse::Mark::Right] - corners[(int)::ShapeViewer::ROIEllipse::Mark::Left],
+        unitVector);
+    auto c = ellipseRoi->GetEllipse().C();
+    auto center = ellipseRoi->GetEllipse().Center();
+    auto vector = unitVector * c;
+    auto focus1 = center - vector, focus2 = center + vector;
+
+    auto visF1 = new ::ShapeViewer::VisPoint(focus1);
+    auto visF2 = new ::ShapeViewer::VisPoint(focus2);
+    overlay->AddItem(visF1);
+    overlay->AddItem(visF2);
 
     co_return;
 

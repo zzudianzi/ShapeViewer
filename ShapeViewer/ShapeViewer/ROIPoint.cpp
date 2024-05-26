@@ -69,12 +69,6 @@ void ROIPoint::MarkPositions(std::vector<Point>& markPositions) const
 {
     markPositions.push_back(GetPoint());
 }
-std::vector<Point> ROIPoint::MarkPositions() const
-{
-    std::vector<Point> markPositions;
-    MarkPositions(markPositions);
-    return markPositions;
-}
 bool ROIPoint::PtInShape(const Point& pt) const
 {
     return false;
@@ -110,12 +104,11 @@ bool ROIPoint::Draw()
         auto brush = display->Brush();
         auto rt = display->RenderTarget();
         auto transform = display->TransformToWindow();
-        brush->SetColor(D2D1::ColorF(D2D1::ColorF::Yellow));
 
-        auto markPositions = MarkPositions();
+        auto markPositions = ROI::MarkPositions();
         for (int i = 0; i < markPositions.size(); i++)
         {
-            auto color = D2D1::ColorF(D2D1::ColorF::Yellow);
+            auto color = D2D1::ColorF(D2D1::ColorF::Green);
             brush->SetColor(color);
             auto center = D2D1::Ellipse(
                 transform.TransformPoint(D2D1::Point2F((float)markPositions[i].X(), (float)markPositions[i].Y())),

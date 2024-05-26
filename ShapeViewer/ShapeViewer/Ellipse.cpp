@@ -61,7 +61,24 @@ void Ellipse::B(double value)
     _B = value;
 }
 
-bool Ellipse::PtInEllipse(const ShapeViewer::Point& pt)
+double Ellipse::C() const
+{
+    auto squareC = _A * _A - _B * _B;
+    assert(squareC > 0);
+    return std::sqrt(squareC);
+}
+
+double Ellipse::Angle() const
+{
+    return _Angle;
+}
+
+void Ellipse::Angle(double value)
+{
+    _Angle = value;
+}
+
+bool Ellipse::PtInEllipse(const ShapeViewer::Point& pt) const
 {
     auto c = std::sqrt(std::abs(_A * _A - _B * _B));
     auto vector = Point(std::cos(_Angle), sin(_Angle)) * c;

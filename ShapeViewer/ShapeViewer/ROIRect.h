@@ -44,7 +44,6 @@ class ROIRect : public ::ShapeViewer::ROI
 
     bool SamePos(const ROI& roi) const override;
     void MarkPositions(std::vector<Point>& markPositions) const override;
-    std::vector<Point> MarkPositions() const override;
     bool PtInShape(const Point& pt) const override;
     bool PtNearBoundary(const Point& pt, double maxDis) const override;
     void DragMark(int selectedMark, const Point& oriPos, const Point& curPos, const ROI& oriROI) override;

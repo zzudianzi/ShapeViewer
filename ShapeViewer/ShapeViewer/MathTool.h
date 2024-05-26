@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Rect.h"
+#include "Line.h"
 
 #include <vector>
 #include <optional>
@@ -12,8 +13,10 @@ void CalcLineByPointAndAngle(double x, double y, double angle, double& a, double
 void CalcLineByPointAndAngle(const Point& pt, double angle, double& a, double& b, double& c);
 bool CalcLineByTwoPoints(double x1, double y1, double x2, double y2, double& a, double& b, double& c);
 bool CalcLineByTwoPoints(const Point& pt1, const Point& pt2, double& a, double& b, double& c);
+bool CalcLineByTwoPoints(const Point& pt1, const Point& pt2, Line& line);
 bool CalcVerticalFootOfPointToline(double x, double y, double a, double b, double c, double& fX, double& fY);
 bool CalcVerticalFootOfPointToline(const Point& point, double a, double b, double c, Point& foot);
+bool CalcVerticalFootOfPointToline(const Point& point, const Line& line, Point& foot);
 bool CalcSymmetricPointOfLine(double x, double y, double a, double b, double c, double& mx, double& my);
 bool CalcSymmetricPointOfLine(const Point& point, double a, double b, double c, Point& symPoint);
 bool FuzzyCompare(double l, double r);
@@ -32,4 +35,6 @@ double CalcDistanceFormPointToPoint(const Point& pt1, const Point& pt2);
 bool PointNearLineSegment(const Point& point, const Point& pt1, const Point& pt2, double disMax);
 bool PointNearBoundary(const Point& point, const std::vector<Point>& vertices, double maxDis);
 std::optional<::ShapeViewer::Rect> CalcBoundingRect(const std::vector<::ShapeViewer::Point>& points);
+double AngleToRadian(double angle);
+double RadianToAngle(double radian);
 } // namespace ShapeViewer::Math

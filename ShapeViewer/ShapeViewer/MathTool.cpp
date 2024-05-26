@@ -2,6 +2,7 @@
 #include "MathTool.h"
 
 #include <algorithm>
+#include <numbers>
 
 namespace ShapeViewer::Math
 {
@@ -64,6 +65,21 @@ bool CalcLineByTwoPoints(const Point& pt1, const Point& pt2, double& a, double& 
     return CalcLineByTwoPoints(pt1.X(), pt1.Y(), pt2.X(), pt2.Y(), a, b, c);
 }
 
+bool CalcLineByTwoPoints(const Point& pt1, const Point& pt2, Line& line)
+{
+    double a, b, c;
+    if (!CalcLineByTwoPoints(pt1, pt2, a, b, c))
+    {
+        return false;
+    }
+
+    line.A(a);
+    line.B(b);
+    line.C(c);
+
+    return true;
+}
+
 bool CalcVerticalFootOfPointToline(double x, double y, double a, double b, double c, double& fX, double& fY)
 {
     if (std::abs(a) < Math::Epsilon && std::abs(b) < Math::Epsilon)
@@ -83,6 +99,11 @@ bool CalcVerticalFootOfPointToline(const Point& point, double a, double b, doubl
     foot.X(fx);
     foot.Y(fy);
     return true;
+}
+
+bool CalcVerticalFootOfPointToline(const Point& point, const Line& line, Point& foot)
+{
+    return CalcVerticalFootOfPointToline(point, line.A(), line.B(), line.C(), foot);
 }
 
 bool CalcSymmetricPointOfLine(double x, double y, double a, double b, double c, double& mx, double& my)
@@ -171,7 +192,7 @@ double CalcAngleOfTwoVector(const Point& v1, const Point& v2)
 
 bool UnitVector(double vx, double vy, double& ux, double& uy)
 {
-    auto d = std::sqrt(ux * ux + uy * uy);
+    auto d = std::sqrt(vx * vx + vy * vy);
     if (d < Math::Epsilon)
     {
         ux = uy = 0.;
@@ -282,5 +303,14 @@ std::optional<::ShapeViewer::Rect> CalcBoundingRect(const std::vector<::ShapeVie
     }
 
     return rc;
+}
+
+double AngleToRadian(double angle)
+{
+    return angle * std::numbers::pi * angle / 180.;
+}
+double RadianToAngle(double radian)
+{
+    return radian * 180. / std::numbers::pi;
 }
 } // namespace ShapeViewer::Math

@@ -25,7 +25,12 @@ class Ellipse : public Geometry
     double B() const;
     void B(double value);
 
-    bool PtInEllipse(const ShapeViewer::Point& pt);
+    double C() const;
+
+    double Angle() const;
+    void Angle(double value);
+
+    bool PtInEllipse(const ShapeViewer::Point& pt) const;
 
     bool Equal(const Geometry& obj) const override;
     bool Copy(const Geometry& obj) override;
