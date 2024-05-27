@@ -313,4 +313,9 @@ double RadianToAngle(double radian)
 {
     return radian * 180. / std::numbers::pi;
 }
+
+double CalcRadianByTwoPoints(const Point& pt1, const Point& pt2)
+{
+    return std::atan2(pt2.Y() - pt1.Y(), pt2.X() - pt1.X());
+}
 } // namespace ShapeViewer::Math

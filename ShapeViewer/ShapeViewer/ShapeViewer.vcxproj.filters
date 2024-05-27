@@ -115,6 +115,15 @@
     <ClCompile Include="Line.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="VisArc.cpp">
+      <Filter>Vis</Filter>
+    </ClCompile>
+    <ClCompile Include="Arc.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="ROIArc.cpp">
+      <Filter>ROI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -219,6 +228,15 @@
     </ClInclude>
     <ClInclude Include="Line.h">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Arc.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="VisArc.h">
+      <Filter>Vis</Filter>
+    </ClInclude>
+    <ClInclude Include="ROIArc.h">
+      <Filter>ROI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

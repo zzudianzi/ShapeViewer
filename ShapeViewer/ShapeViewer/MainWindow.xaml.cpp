@@ -26,6 +26,8 @@
 #include "VisEllipse.h"
 #include "ROIEllipse.h"
 #include "MathTool.h"
+#include "VisArc.h"
+#include "ROIArc.h"
 
 #include <numbers>
 
@@ -247,6 +249,8 @@ IAsyncAction MainWindow::btnLoadPolyline_Click(IInspectable const& sender, Route
     overlay->AddItem(visF1);
     overlay->AddItem(visF2);
 
+    auto roiArc = new ::ShapeViewer::ROIArc(::ShapeViewer::Arc(::ShapeViewer::Point(200, 200), 50, 0, 1.57));
+    display.AddROI(roiArc);
     co_return;
 
     winrt::Windows::Storage::Pickers::FileOpenPicker picker;

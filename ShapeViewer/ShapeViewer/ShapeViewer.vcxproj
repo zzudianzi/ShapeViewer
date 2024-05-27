@@ -122,6 +122,7 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Arc.h" />
     <ClInclude Include="BindableBase.h" />
     <ClInclude Include="BoxApp.h" />
     <ClInclude Include="Circle.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="D2DWrapper.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Line.h" />
+    <ClInclude Include="ROIArc.h" />
     <ClInclude Include="TemplateHelper.hpp" />
     <ClInclude Include="Overlay.h" />
     <ClInclude Include="d3dApp.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="ROIRect.h" />
     <ClInclude Include="UploadBuffer.h" />
     <ClInclude Include="Vis.h" />
+    <ClInclude Include="VisArc.h" />
     <ClInclude Include="VisCircle.h" />
     <ClInclude Include="VisEllipse.h" />
     <ClInclude Include="VisPoint.h" />
@@ -210,6 +213,7 @@
     <ClCompile Include="Polyline.cpp" />
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="ROI.cpp" />
+    <ClCompile Include="ROIArc.cpp" />
     <ClCompile Include="ROICircle.cpp" />
     <ClCompile Include="ROIEllipse.cpp" />
     <ClCompile Include="ROIPoint.cpp" />
@@ -218,6 +222,7 @@
     <ClCompile Include="ROIRect.cpp" />
     <ClCompile Include="UploadBuffer.cpp" />
     <ClCompile Include="Vis.cpp" />
+    <ClCompile Include="VisArc.cpp" />
     <ClCompile Include="VisCircle.cpp" />
     <ClCompile Include="VisEllipse.cpp" />
     <ClCompile Include="VisPoint.cpp" />
@@ -266,6 +271,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Arc.cpp" />
     <None Include="packages.config" />
   </ItemGroup>
   <!--

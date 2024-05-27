@@ -37,4 +37,5 @@ bool PointNearBoundary(const Point& point, const std::vector<Point>& vertices, d
 std::optional<::ShapeViewer::Rect> CalcBoundingRect(const std::vector<::ShapeViewer::Point>& points);
 double AngleToRadian(double angle);
 double RadianToAngle(double radian);
+double CalcRadianByTwoPoints(const Point& pt1, const Point& pt2);
 } // namespace ShapeViewer::Math
