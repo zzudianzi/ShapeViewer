@@ -351,8 +351,7 @@ void Display::OnMouseMove(WPARAM btnState, int x, int y)
                 continue;
             }
 
-            if (!find && (roi->PtNearBoundary(pt, maxDis) ||
-                Math::CalcDistanceFormPointToPoint(pt, roi->Center()) < maxDis))
+            if (!find && (roi->PtNearBoundary(pt, maxDis) || roi->PtNearMark(pt, maxDis)))
             {
                 find = true;
                 roi->DrawMark(true);

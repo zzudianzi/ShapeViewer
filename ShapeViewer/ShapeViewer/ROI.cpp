@@ -66,3 +66,20 @@ std::vector<Point> ROI::MarkPositions() const
     MarkPositions(markPositions);
     return markPositions;
 }
+
+bool ROI::PtNearMark(const ::ShapeViewer::Point& pt, double maxDis) const
+{
+    auto marks = MarkPositions();
+
+    double maxDis2 = maxDis * maxDis;
+    for (auto&& mark : marks)
+    {
+        auto vec = pt - mark;
+        if ((vec.X() * vec.X() + vec.Y() * vec.Y()) < maxDis2)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}

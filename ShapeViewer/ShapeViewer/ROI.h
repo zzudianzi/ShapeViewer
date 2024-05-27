@@ -32,6 +32,7 @@ class ROI
     std::vector<::ShapeViewer::Point> MarkPositions() const;
     virtual bool PtInShape(const ::ShapeViewer::Point& pt) const = 0;
     virtual bool PtNearBoundary(const ::ShapeViewer::Point& pt, double maxDis) const = 0;
+    virtual bool PtNearMark(const ::ShapeViewer::Point& pt, double maxDis) const;
     virtual void DragMark(
         int selectedMark,
         const ::ShapeViewer::Point& oriPos,
