@@ -51,7 +51,7 @@ bool VisArc::CreateD2DFigure()
     auto startPoint = transform.TransformPoint(D2D1::Point2F(_Arc.StartPoint().X(), _Arc.StartPoint().Y()));
     sink->BeginFigure(startPoint, D2D1_FIGURE_BEGIN_FILLED);
 
-    auto scale = _Display->GetSceneScale();
+    auto scale = _Display->GetWindowScale();
     auto radius = _Arc.Radius() * scale;
     auto rotationAngle = _Arc.RotationRadian() * 180. / std::numbers::pi;
 

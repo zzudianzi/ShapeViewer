@@ -3,17 +3,16 @@
 #include "MathTool.h"
 #include "TemplateHelper.hpp"
 #include "Display.h"
+#include "Line.h"
 
 using namespace ShapeViewer;
 
 ROIArc::ROIArc(const ::ShapeViewer::Arc& arc) : _VisArc(arc)
 {
-
 }
 
 ROIArc::ROIArc(const ::ShapeViewer::ROIArc& roi) : _VisArc(roi._VisArc)
 {
-
 }
 
 ::ShapeViewer::ROI* ROIArc::Clone() const
@@ -60,7 +59,7 @@ const ::ShapeViewer::Vis& ROIArc::GetVis() const
     {
         return pt;
     }
-    
+
     return arc.Center() * 2. - pt;
 }
 
@@ -124,7 +123,8 @@ bool ROIArc::PtNearBoundary(const Point& pt, double maxDis) const
         return true;
     }
 
-    if (arc.RestrictStartRadian() > arc.RestrictStopRadian() && (arc.RestrictStartRadian() < radian || radian < arc.RestrictStopRadian()))
+    if (arc.RestrictStartRadian() > arc.RestrictStopRadian() &&
+        (arc.RestrictStartRadian() < radian || radian < arc.RestrictStopRadian()))
     {
         return true;
     }
@@ -159,12 +159,59 @@ void ROIArc::DragMark(int selectedMark, const Point& oriPos, const Point& curPos
         }
         break;
     case Mark::Roundness:
+        {
+            Line line(1, 1, 0);
+            const auto& oriCenter = oriROIArc->GetArc().Center();
+            const auto& oriRoundness = markPositions[(int)Mark::Roundness];
+            if (!Math::CalcLineByTwoPoints(oriRoundness, oriCenter, line))
+            {
+                return;
+            }
+
+            Point vec, unitVec, foot, newCenter;
+            Math::CalcVerticalFootOfPointToline(curPos, line, foot);
+            vec = Math::CalcVectorOfTwoPoints(foot, oriCenter);
+            Math::UnitVector(vec, unitVec);
+
+            Point newCenterInArc = foot + unitVec * MarkOffset;
+            Line line1(1, 1, 0), line2(1, 1, 0);
+
+            const auto& startPoint = markPositions[(int)Mark::Start];
+            const auto& stopPoint = markPositions[(int)Mark::Stop];
+
+            Math::CalcPerpendicularBisector(newCenterInArc, startPoint, line1);
+            Math::CalcPerpendicularBisector(newCenterInArc, stopPoint, line2);
+            Math::CalcIntersectionPointOfTwoLines(line1, line2, newCenter);
+
+            double startRadian = Math::RestrictRadian(Math::CalcRadianByTwoPoints(newCenter, startPoint));
+            double stopRadian = Math::RestrictRadian(Math::CalcRadianByTwoPoints(newCenter, stopPoint));
+            double radius = Math::CalcDistanceFormPointToPoint(newCenter, startPoint);
+
+            const auto& oriCenterInArc = oriROIArc->Center();
+            bool swapStartEnd = [&startPoint, &stopPoint, &newCenterInArc, &oriCenterInArc]() -> bool {
+                Line line(1, 1, 0);
+                Math::CalcLineByTwoPoints(startPoint, stopPoint, line);
+                auto relativePosition1 = line.A() * oriCenterInArc.X() + line.B() * oriCenterInArc.Y() + line.C();
+                auto relativePosition2 = line.A() * newCenterInArc.X() + line.B() * newCenterInArc.Y() + line.C();
+
+                return relativePosition1 * relativePosition2 < 0;
+            }();
+
+            if (swapStartEnd)
+            {
+                std::swap(startRadian, stopRadian);
+            }
+
+            GetArc().Center() = newCenter;
+            GetArc().StartRadian(startRadian);
+            GetArc().StopRadian(stopRadian);
+            GetArc().Radius(radius);
+        }
         break;
     default:
         break;
     }
 }
-
 
 bool ROIArc::Draw()
 {

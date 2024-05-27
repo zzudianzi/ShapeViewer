@@ -318,4 +318,53 @@ double CalcRadianByTwoPoints(const Point& pt1, const Point& pt2)
 {
     return std::atan2(pt2.Y() - pt1.Y(), pt2.X() - pt1.X());
 }
+bool CalcPerpendicularBisector(const Point& pt1, const Point& pt2, Line& line)
+{
+    if (pt1 == pt2)
+    {
+        return false;
+    }
+
+    auto vec = pt2 - pt1;
+    auto center = (pt1 + pt2) * 0.5;
+    auto aPtInPerpendicularLine = Point(center.X() + -vec.Y(), center.Y() + vec.X());
+
+    return Math::CalcLineByTwoPoints(center, aPtInPerpendicularLine, line);
+}
+
+bool CalcIntersectionPointOfTwoLines(const Line& line1, const Line& line2, Point& pt)
+{
+    if (std::abs(line1.A() * line2.B() - line1.B() * line2.A()) < Epsilon)
+    {
+        return false;
+    }
+
+    auto denominatorReciprocal = 1. / (line1.A() * line2.B() - line2.A() * line1.B());
+    auto x = (line1.B() * line2.C() - line2.B() * line1.C()) * denominatorReciprocal;
+    auto y = (line2.A() * line1.C() - line1.A() * line2.C()) * denominatorReciprocal;
+
+    pt.X(x);
+    pt.Y(y);
+
+    return true;
+}
+
+double RestrictRadian(double radian)
+{
+    auto pi2 = 2. * std::numbers::pi;
+    int k = (int)(radian / pi2);
+    radian = radian - k * pi2;
+
+    if (std::abs(radian) < Math::Epsilon)
+    {
+        return 0;
+    }
+
+    if (radian < 0)
+    {
+        radian += pi2;
+    }
+
+    return radian;
+}
 } // namespace ShapeViewer::Math

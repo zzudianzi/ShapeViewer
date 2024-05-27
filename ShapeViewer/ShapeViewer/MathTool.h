@@ -38,4 +38,7 @@ std::optional<::ShapeViewer::Rect> CalcBoundingRect(const std::vector<::ShapeVie
 double AngleToRadian(double angle);
 double RadianToAngle(double radian);
 double CalcRadianByTwoPoints(const Point& pt1, const Point& pt2);
+bool CalcPerpendicularBisector(const Point& pt1, const Point& pt2, Line& line);
+bool CalcIntersectionPointOfTwoLines(const Line& line1, const Line& line2, Point& pt);
+double RestrictRadian(double radian);
 } // namespace ShapeViewer::Math
