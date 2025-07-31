@@ -222,8 +222,6 @@ IAsyncAction MainWindow::btnLoadPolyline_Click(IInspectable const& sender, Route
 {
     auto& display = _d3dApp->GetDisplay();
     auto overlay = display.CreateOverlay();
-    auto visPoint = new ::ShapeViewer::VisPoint(::ShapeViewer::Point(100, 100));
-    auto v1 = new ::ShapeViewer::VisPoint(*visPoint);
     auto visCircle = new ::ShapeViewer::VisCircle(::ShapeViewer::Circle(::ShapeViewer::Point(100, 100), 50));
     overlay->AddItem(visCircle);
 
@@ -275,7 +273,6 @@ IAsyncAction MainWindow::btnLoadPolyline_Click(IInspectable const& sender, Route
     {
         jsonString = co_await FileIO::ReadTextAsync(file);
         auto polyline = ::ShapeViewer::JsonHelper::ReadJson(jsonString.c_str());
-        auto& display = _d3dApp->GetDisplay();
         auto roi = new ::ShapeViewer::ROIPolyline(polyline);
         display.AddROI(roi);
     }
