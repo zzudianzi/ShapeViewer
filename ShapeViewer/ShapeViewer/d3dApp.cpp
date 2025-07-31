@@ -32,9 +32,43 @@ bool D3DApp::InitDirect3D()
 
     winrt::check_hresult(CreateDXGIFactory1(IID_PPV_ARGS(&_Factory)));
 
+    winrt::com_ptr<IDXGIAdapter> adapterWithMaxMemory;
+    SIZE_T memory = 0; 
+    winrt::com_ptr<IDXGIAdapter> adapter;
+    UINT index = 0;
+    while (SUCCEEDED(_Factory->EnumAdapters(index++, adapter.put())))
+    {
+        DXGI_ADAPTER_DESC adapterDesc;
+        adapter->GetDesc(&adapterDesc);
+
+        if (adapterDesc.DedicatedVideoMemory > memory)
+        {
+            adapterWithMaxMemory = adapter;
+        }
+
+        UINT outputIndex = 0;
+        winrt::com_ptr<IDXGIOutput> output;
+        while (SUCCEEDED(adapter->EnumOutputs(outputIndex++, output.put())))
+        {
+            DXGI_OUTPUT_DESC outputDesc;
+            output->GetDesc(&outputDesc);
+
+            UINT flags = 0;
+            UINT count = 0;
+            DXGI_MODE_DESC modeDesc = {};
+            output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, flags, &count, nullptr);
+
+            std::vector<DXGI_MODE_DESC> modeList(count);
+            winrt::check_hresult(
+                output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, flags, &count, modeList.data()));
+
+            int a = 5;
+            a++;
+        }
+    }
+
     // Create d3d device
     HRESULT hardwareResult = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&_Device));
-
     // Fallback to WARP device
     if (FAILED(hardwareResult))
     {
@@ -42,6 +76,16 @@ bool D3DApp::InitDirect3D()
         winrt::check_hresult(_Factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
         winrt::check_hresult(D3D12CreateDevice(warpAdapter.get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&_Device)));
     }
+
+    D3D_FEATURE_LEVEL featureLevels[5] = {
+        D3D_FEATURE_LEVEL_12_2,
+        D3D_FEATURE_LEVEL_12_1,
+        D3D_FEATURE_LEVEL_12_0,
+        D3D_FEATURE_LEVEL_11_1,
+        D3D_FEATURE_LEVEL_11_0};
+
+    D3D12_FEATURE_DATA_FEATURE_LEVELS featureLevelsData{.NumFeatureLevels = 5, .pFeatureLevelsRequested = featureLevels};
+    _Device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevelsData, sizeof featureLevelsData);
 
     // Create the Fence
     winrt::check_hresult(_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(_Fence.put())));
@@ -132,8 +176,15 @@ void D3DApp::FlushCommandQueue()
 
         winrt::check_hresult(_Fence->SetEventOnCompletion(_CurrentFence, eventHandle));
 
-        WaitForSingleObject(eventHandle, INFINITE);
-        CloseHandle(eventHandle);
+        if (eventHandle)
+        {
+            WaitForSingleObject(eventHandle, INFINITE);
+            CloseHandle(eventHandle);
+        }
+        else
+        {
+            throw winrt::hresult_error(HRESULT_FROM_WIN32(GetLastError()), L"Failed to create event handle for fence.");
+        }
     }
 }
 

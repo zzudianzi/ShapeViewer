@@ -29,4 +29,6 @@ class d3dUtil
         const D3D_SHADER_MACRO* defines,
         const std::string& entryPoint,
         const std::string& target);
+
+    static winrt::com_ptr<ID3DBlob> LoadBinary(const std::wstring& filename);
 };

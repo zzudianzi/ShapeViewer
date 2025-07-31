@@ -34,7 +34,7 @@ class MeshGeometry
 
     UINT _VertexByteStride = 0;
     UINT _VertexBufferByteSize = 0;
-    DXGI_FORMAT _IndexFormat = DXGI_FORMAT_R16_UINT;
+    DXGI_FORMAT _IndexFormat = DXGI_FORMAT_R32_UINT;
     UINT _IndexBufferByteSize = 0;
 
     // A Mesh geometry may store multiple geometries in one vertex/index buffer.

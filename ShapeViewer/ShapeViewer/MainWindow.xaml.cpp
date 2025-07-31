@@ -30,6 +30,7 @@
 #include "ROIArc.h"
 
 #include <numbers>
+#include <optional>
 
 using namespace winrt;
 using namespace Windows::Foundation;

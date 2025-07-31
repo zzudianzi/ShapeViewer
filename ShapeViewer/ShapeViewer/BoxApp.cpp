@@ -106,7 +106,7 @@ void BoxApp::Draw()
         auto indexBufferView = _BoxGeometry->IndexBufferView();
         _CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
         _CommandList->IASetIndexBuffer(&indexBufferView);
-        _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+        _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         _CommandList->SetGraphicsRootDescriptorTable(0, _CBVHeap->GetGPUDescriptorHandleForHeapStart());
 
@@ -173,7 +173,7 @@ void BoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 
         _Radius += dx - dy;
 
-        _Radius = std::clamp(_Radius, 3.f, 15.f);
+        _Radius = std::clamp(_Radius, 0.3f, 150.f);
     }
 
     _LastMousePos.x = x;
@@ -246,76 +246,191 @@ void BoxApp::BuildShaderAndInputLayout()
     std::filesystem::path p = exePath;
     std::wstring folderPath = p.parent_path().wstring();
     std::wstring path = folderPath + LR"(\Shaders\color.hlsl)";
-    _VSByteCode = d3dUtil::CompileShader(path, nullptr, "VS", "vs_5_0");
-    _PSByteCode = d3dUtil::CompileShader(path, nullptr, "PS", "ps_5_0");
+     _VSByteCode = d3dUtil::CompileShader(path, nullptr, "VS", "vs_5_0");
+     _PSByteCode = d3dUtil::CompileShader(path, nullptr, "PS", "ps_5_0");
+
+    // _VSByteCode = d3dUtil::LoadBinary(folderPath + LR"(\Shaders\color_vs.cso)");
+    // _PSByteCode = d3dUtil::LoadBinary(folderPath + LR"(\Shaders\color_ps.cso)");
 
     _InputLayout = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
         {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 }
 
+#include <fstream>
+
 void BoxApp::BuildBoxGeometry()
 {
-    std::array<Vertex, 8> vertices = {
-        Vertex({XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White)}),
-        Vertex({XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black)}),
-        Vertex({XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red)}),
-        Vertex({XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green)}),
-        Vertex({XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue)}),
-        Vertex({XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow)}),
-        Vertex({XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan)}),
-        Vertex({XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta)})};
-
-    for (auto&& vertex : vertices)
+    if (0)
     {
-        vertex._Color.w = 0.1f;
+        std::array<Vertex, 3> vertices = {
+            Vertex({XMFLOAT3(-1.0f, -1.0f, 0), XMFLOAT4(Colors::White)}),
+            Vertex({XMFLOAT3(-1.0f, +1.0f, 0), XMFLOAT4(Colors::White)}),
+            Vertex({XMFLOAT3(+1.0f, +1.0f, 0), XMFLOAT4(Colors::White)})};
+
+        for (auto&& vertex : vertices)
+        {
+            vertex._Color.w = 0.1f;
+        }
+
+        std::array<int, 3> indices = {0, 1, 2};
+
+        const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
+        const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(int));
+
+        _BoxGeometry = std::make_unique<MeshGeometry>();
+        _BoxGeometry->_Name = "boxGeometry";
+
+        winrt::check_hresult(D3DCreateBlob(verticeByteSize, _BoxGeometry->_VertexBufferCPU.put()));
+        CopyMemory(_BoxGeometry->_VertexBufferCPU->GetBufferPointer(), vertices.data(), verticeByteSize);
+
+        winrt::check_hresult(D3DCreateBlob(indexByteSize, _BoxGeometry->_IndexBufferCPU.put()));
+        CopyMemory(_BoxGeometry->_IndexBufferCPU->GetBufferPointer(), indices.data(), indexByteSize);
+
+        _BoxGeometry->_VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
+            _Device, _CommandList, vertices.data(), verticeByteSize, _BoxGeometry->_VertexBufferUploader);
+
+        _BoxGeometry->_IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
+            _Device, _CommandList, indices.data(), indexByteSize, _BoxGeometry->_IndexBufferUploader);
+
+        _BoxGeometry->_VertexByteStride = sizeof(Vertex);
+        _BoxGeometry->_VertexBufferByteSize = verticeByteSize;
+        _BoxGeometry->_IndexFormat = DXGI_FORMAT_R32_UINT;
+        _BoxGeometry->_IndexBufferByteSize = indexByteSize;
+
+        SubmeshGeometry submesh;
+        submesh._IndexCount = (UINT)indices.size();
+        submesh._StartIndexLocation = 0;
+        submesh._BaseVertexLocation = 0;
+
+        _BoxGeometry->_DrawArgs["box"] = submesh;
     }
 
-	std::array<std::uint16_t, 24> indices =
-	{
-		0, 1,
-        1, 2,
-        2, 3,
-        3, 0,
-        4, 5,
-        5, 6,
-        6, 7,
-        7, 4,
-        0, 4,
-        1, 5,
-        2, 6,
-        3, 7
-	};
+    if (1)
+    {
+        const std::string& filePath = R"(C:\temp\tessmesh_1750360814_281.bin)";
+        std::ifstream meshFile(filePath, std::ios::binary);
+        if (meshFile.is_open())
+        {
+            uint32_t magic = 0;
+            uint32_t version = 0;
+            meshFile.read(reinterpret_cast<char*>(&magic), sizeof(magic));
+            meshFile.read(reinterpret_cast<char*>(&version), sizeof(version));
 
-    const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
-    const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(std::uint16_t));
+            uint32_t vertexCount = 0, normalCount = 0, uvCount = 0, indexCount = 0;
+            meshFile.read(reinterpret_cast<char*>(&vertexCount), sizeof(vertexCount));
+            meshFile.read(reinterpret_cast<char*>(&normalCount), sizeof(normalCount));
+            meshFile.read(reinterpret_cast<char*>(&uvCount), sizeof(uvCount));
+            meshFile.read(reinterpret_cast<char*>(&indexCount), sizeof(indexCount));
 
-    _BoxGeometry = std::make_unique<MeshGeometry>();
-    _BoxGeometry->_Name = "boxGeometry";
+            // load vertices
+            std::vector<Vertex> vertices(vertexCount);
+            std::vector<float> verticesBuf(vertexCount * 3);
+            meshFile.read(reinterpret_cast<char*>(verticesBuf.data()), sizeof(float) * verticesBuf.size());
+            for (size_t i = 0; i < vertexCount; ++i)
+            {
+                vertices[i]._Pos = XMFLOAT3(verticesBuf[i * 3], verticesBuf[i * 3 + 1], verticesBuf[i * 3 + 2]);
+                vertices[i]._Color = XMFLOAT4(Colors::White);
+            }
 
-    winrt::check_hresult(D3DCreateBlob(verticeByteSize, _BoxGeometry->_VertexBufferCPU.put()));
-    CopyMemory(_BoxGeometry->_VertexBufferCPU->GetBufferPointer(), vertices.data(), verticeByteSize);
+            // normals
+            std::vector<float> normalsBuf(normalCount * 3);
+            meshFile.read(reinterpret_cast<char*>(normalsBuf.data()), sizeof(float) * normalsBuf.size());
 
-    winrt::check_hresult(D3DCreateBlob(indexByteSize, _BoxGeometry->_IndexBufferCPU.put()));
-    CopyMemory(_BoxGeometry->_IndexBufferCPU->GetBufferPointer(), indices.data(), indexByteSize);
+            // uv
+            std::vector<float> uvsBuf(uvCount * 2);
+            meshFile.read(reinterpret_cast<char*>(uvsBuf.data()), sizeof(float) * uvsBuf.size());
 
-    _BoxGeometry->_VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
-        _Device, _CommandList, vertices.data(), verticeByteSize, _BoxGeometry->_VertexBufferUploader);
+            // index
+            std::vector<int> indices(indexCount);
+            meshFile.read(reinterpret_cast<char*>(indices.data()), sizeof(int) * indices.size());
 
-    _BoxGeometry->_IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
-        _Device, _CommandList, indices.data(), indexByteSize, _BoxGeometry->_IndexBufferUploader);
+            meshFile.close();
 
-    _BoxGeometry->_VertexByteStride = sizeof(Vertex);
-    _BoxGeometry->_VertexBufferByteSize = verticeByteSize;
-    _BoxGeometry->_IndexFormat = DXGI_FORMAT_R16_UINT;
-    _BoxGeometry->_IndexBufferByteSize = indexByteSize;
+            const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
+            const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(int));
 
-    SubmeshGeometry submesh;
-    submesh._IndexCount = (UINT)indices.size();
-    submesh._StartIndexLocation = 0;
-    submesh._BaseVertexLocation = 0;
+            _BoxGeometry = std::make_unique<MeshGeometry>();
+            _BoxGeometry->_Name = "boxGeometry";
 
-    _BoxGeometry->_DrawArgs["box"] = submesh;
+            winrt::check_hresult(D3DCreateBlob(verticeByteSize, _BoxGeometry->_VertexBufferCPU.put()));
+            CopyMemory(_BoxGeometry->_VertexBufferCPU->GetBufferPointer(), vertices.data(), verticeByteSize);
+
+            winrt::check_hresult(D3DCreateBlob(indexByteSize, _BoxGeometry->_IndexBufferCPU.put()));
+            CopyMemory(_BoxGeometry->_IndexBufferCPU->GetBufferPointer(), indices.data(), indexByteSize);
+
+            _BoxGeometry->_VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
+                _Device, _CommandList, vertices.data(), verticeByteSize, _BoxGeometry->_VertexBufferUploader);
+
+            _BoxGeometry->_IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
+                _Device, _CommandList, indices.data(), indexByteSize, _BoxGeometry->_IndexBufferUploader);
+
+            _BoxGeometry->_VertexByteStride = sizeof(Vertex);
+            _BoxGeometry->_VertexBufferByteSize = verticeByteSize;
+            _BoxGeometry->_IndexFormat = DXGI_FORMAT_R32_UINT;
+            _BoxGeometry->_IndexBufferByteSize = indexByteSize;
+
+            SubmeshGeometry submesh;
+            submesh._IndexCount = (UINT)indices.size();
+            submesh._StartIndexLocation = 0;
+            submesh._BaseVertexLocation = 0;
+
+            _BoxGeometry->_DrawArgs["box"] = submesh;
+        }
+    }
+    
+
+    if (0)
+    {
+        std::array<Vertex, 8> vertices = {
+            Vertex({XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White)}),
+            Vertex({XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black)}),
+            Vertex({XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red)}),
+            Vertex({XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green)}),
+            Vertex({XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue)}),
+            Vertex({XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow)}),
+            Vertex({XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan)}),
+            Vertex({XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta)})};
+
+        for (auto&& vertex : vertices)
+        {
+            vertex._Color.w = 0.1f;
+        }
+
+        std::array<std::uint16_t, 24> indices = {0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6,
+                                                 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7};
+
+        const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
+        const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(std::uint16_t));
+
+        _BoxGeometry = std::make_unique<MeshGeometry>();
+        _BoxGeometry->_Name = "boxGeometry";
+
+        winrt::check_hresult(D3DCreateBlob(verticeByteSize, _BoxGeometry->_VertexBufferCPU.put()));
+        CopyMemory(_BoxGeometry->_VertexBufferCPU->GetBufferPointer(), vertices.data(), verticeByteSize);
+
+        winrt::check_hresult(D3DCreateBlob(indexByteSize, _BoxGeometry->_IndexBufferCPU.put()));
+        CopyMemory(_BoxGeometry->_IndexBufferCPU->GetBufferPointer(), indices.data(), indexByteSize);
+
+        _BoxGeometry->_VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
+            _Device, _CommandList, vertices.data(), verticeByteSize, _BoxGeometry->_VertexBufferUploader);
+
+        _BoxGeometry->_IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
+            _Device, _CommandList, indices.data(), indexByteSize, _BoxGeometry->_IndexBufferUploader);
+
+        _BoxGeometry->_VertexByteStride = sizeof(Vertex);
+        _BoxGeometry->_VertexBufferByteSize = verticeByteSize;
+        _BoxGeometry->_IndexFormat = DXGI_FORMAT_R16_UINT;
+        _BoxGeometry->_IndexBufferByteSize = indexByteSize;
+
+        SubmeshGeometry submesh;
+        submesh._IndexCount = (UINT)indices.size();
+        submesh._StartIndexLocation = 0;
+        submesh._BaseVertexLocation = 0;
+
+        _BoxGeometry->_DrawArgs["box"] = submesh;
+    }
+    
 }
 
 void BoxApp::BuildPSO()
@@ -332,7 +447,7 @@ void BoxApp::BuildPSO()
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
     psoDesc.SampleMask = UINT_MAX;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = _BackBufferFormat;
     psoDesc.SampleDesc.Count = _m4xMsaaState ? 4 : 1;
