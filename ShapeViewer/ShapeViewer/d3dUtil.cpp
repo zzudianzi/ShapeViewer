@@ -4,6 +4,8 @@
 #include "d3dx12.h"
 #include <Shlwapi.h>
 
+#include <fstream>
+
 #pragma comment(lib, "Shlwapi.lib")
 
 winrt::com_ptr<ID3D12Resource> d3dUtil::CreateDefaultBuffer(
@@ -110,4 +112,21 @@ winrt::com_ptr<ID3DBlob> d3dUtil::CompileShader(
     winrt::check_hresult(hr);
 
     return byteCode;
+}
+
+winrt::com_ptr<ID3DBlob> d3dUtil::LoadBinary(const std::wstring& filename)
+{
+    std::ifstream fin(filename, std::ios::binary);
+
+    fin.seekg(0, std::ios_base::end);
+    std::ifstream::pos_type size = static_cast<int>(fin.tellg());
+    fin.seekg(0, std::ios_base::beg);
+
+    winrt::com_ptr<ID3DBlob> blob;
+    winrt::check_hresult(D3DCreateBlob(size, blob.put()));
+
+    fin.read(static_cast<char*>(blob->GetBufferPointer()), size);
+    fin.close();
+
+    return blob;
 }
