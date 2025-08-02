@@ -23,17 +23,22 @@ class MeshGeometry
   public:
     std::string _Name;
 
-    winrt::com_ptr<ID3DBlob> _VertexBufferCPU;
+    winrt::com_ptr<ID3DBlob> _VPosBufferCPU;
+    winrt::com_ptr<ID3DBlob> _VColorBufferCPU;
     winrt::com_ptr<ID3DBlob> _IndexBufferCPU;
 
-    winrt::com_ptr<ID3D12Resource> _VertexBufferGPU;
+    winrt::com_ptr<ID3D12Resource> _VPosBufferGPU;
+    winrt::com_ptr<ID3D12Resource> _VColorBufferGPU;
     winrt::com_ptr<ID3D12Resource> _IndexBufferGPU;
 
-    winrt::com_ptr<ID3D12Resource> _VertexBufferUploader;
+    winrt::com_ptr<ID3D12Resource> _VPosBufferUploader;
+    winrt::com_ptr<ID3D12Resource> _VColorBufferUploader;
     winrt::com_ptr<ID3D12Resource> _IndexBufferUploader;
 
-    UINT _VertexByteStride = 0;
-    UINT _VertexBufferByteSize = 0;
+    UINT _VPosByteStride = 0;
+    UINT _VPosBufferByteSize = 0;
+    UINT _VColorByteStride = 0;
+    UINT _VColorBufferByteSize = 0;
     DXGI_FORMAT _IndexFormat = DXGI_FORMAT_R16_UINT;
     UINT _IndexBufferByteSize = 0;
 
@@ -42,7 +47,8 @@ class MeshGeometry
     // Sub-meshes individually.
     std::unordered_map<std::string, SubmeshGeometry> _DrawArgs;
 
-    D3D12_VERTEX_BUFFER_VIEW VertexBufferView() const;
+    D3D12_VERTEX_BUFFER_VIEW VPosBufferView() const;
+    D3D12_VERTEX_BUFFER_VIEW VColorBufferView() const;
     D3D12_INDEX_BUFFER_VIEW IndexBufferView() const;
     void DisposeUploaders();
 };

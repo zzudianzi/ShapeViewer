@@ -12,13 +12,13 @@ using namespace ShapeViewer;
 
 namespace
 {
-    struct Vertex
+    struct VPosData
     {
         XMFLOAT3 _Pos;
-        XMFLOAT3 _Tangent;
-        XMFLOAT3 _Normal;
-        XMFLOAT2 _Tex0;
-        XMFLOAT2 _Tex1;
+    };
+
+    struct VColorData
+    {
         XMFLOAT4 _Color;
     };
 }
@@ -115,9 +115,11 @@ void BoxApp::Draw()
 
     if (_Draw3D)
     {
-        auto vertexBufferView = _BoxGeometry->VertexBufferView();
+        auto vPosBufferView = _BoxGeometry->VPosBufferView();
+        auto vColorBufferView = _BoxGeometry->VColorBufferView();
         auto indexBufferView = _BoxGeometry->IndexBufferView();
-        _CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+        _CommandList->IASetVertexBuffers(0, 1, &vPosBufferView);
+        _CommandList->IASetVertexBuffers(1, 1, &vColorBufferView);
         _CommandList->IASetIndexBuffer(&indexBufferView);
         _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
@@ -264,38 +266,34 @@ void BoxApp::BuildShaderAndInputLayout()
 
     _InputLayout = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"TEXCOORDONE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"TEXCOORDTWO", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 52, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 }
 
 void BoxApp::BuildBoxGeometry()
 {
-    std::array<Vertex, 8> vertices = {
-        Vertex(
-            {XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(), XMFLOAT3(), XMFLOAT2(), XMFLOAT2(), XMFLOAT4(Colors::White)}),
-        Vertex(
-            {XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT3(), XMFLOAT3(), XMFLOAT2(), XMFLOAT2(), XMFLOAT4(Colors::Black)}),
-        Vertex({XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT3(), XMFLOAT3(), XMFLOAT2(), XMFLOAT2(), XMFLOAT4(Colors::Red)}),
-        Vertex(
-            {XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT3(), XMFLOAT3(), XMFLOAT2(), XMFLOAT2(), XMFLOAT4(Colors::Green)}),
-        Vertex({XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT3(), XMFLOAT3(), XMFLOAT2(), XMFLOAT2(), XMFLOAT4(Colors::Blue)}),
-        Vertex(
-            {XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT3(), XMFLOAT3(), XMFLOAT2(), XMFLOAT2(), XMFLOAT4(Colors::Yellow)}),
-        Vertex({XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT3(), XMFLOAT3(), XMFLOAT2(), XMFLOAT2(), XMFLOAT4(Colors::Cyan)}),
-        Vertex(
-            {XMFLOAT3(+1.0f, -1.0f, +1.0f),
-             XMFLOAT3(),
-             XMFLOAT3(),
-             XMFLOAT2(),
-             XMFLOAT2(),
-             XMFLOAT4(Colors::Magenta)})};
+    std::array<VPosData, 8> vertices = {
+        VPosData({XMFLOAT3(-1.0f, -1.0f, -1.0f)}),
+        VPosData({XMFLOAT3(-1.0f, +1.0f, -1.0f)}),
+        VPosData({XMFLOAT3(+1.0f, +1.0f, -1.0f)}),
+        VPosData({XMFLOAT3(+1.0f, -1.0f, -1.0f)}),
+        VPosData({XMFLOAT3(-1.0f, -1.0f, +1.0f)}),
+        VPosData({XMFLOAT3(-1.0f, +1.0f, +1.0f)}),
+        VPosData({XMFLOAT3(+1.0f, +1.0f, +1.0f)}),
+        VPosData({XMFLOAT3(+1.0f, -1.0f, +1.0f)})};
 
-    for (auto&& vertex : vertices)
+    std::array<VColorData, 8> colors = {
+        XMFLOAT4(Colors::White),
+        XMFLOAT4(Colors::Black),
+        XMFLOAT4(Colors::Red),
+        XMFLOAT4(Colors::Green),
+        XMFLOAT4(Colors::Blue),
+        XMFLOAT4(Colors::Yellow),
+        XMFLOAT4(Colors::Cyan),
+        XMFLOAT4(Colors::Magenta)};
+
+    for (auto&& color : colors)
     {
-        vertex._Color.w = 0.1f;
+        color._Color.w = 0.1f;
     }
 
     std::array<std::uint16_t, 24> indices = 
@@ -313,26 +311,35 @@ void BoxApp::BuildBoxGeometry()
         3, 7
 	};
 
-    const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
+    const UINT vPosByteSize = static_cast<UINT>(vertices.size() * sizeof(VPosData));
+    const UINT vColorByteSize = static_cast<UINT>(colors.size() * sizeof(VColorData));
     const UINT indexByteSize = static_cast<UINT>(indices.size() * sizeof(std::uint16_t));
 
     _BoxGeometry = std::make_unique<MeshGeometry>();
     _BoxGeometry->_Name = "boxGeometry";
 
-    winrt::check_hresult(D3DCreateBlob(verticeByteSize, _BoxGeometry->_VertexBufferCPU.put()));
-    CopyMemory(_BoxGeometry->_VertexBufferCPU->GetBufferPointer(), vertices.data(), verticeByteSize);
+    winrt::check_hresult(D3DCreateBlob(vPosByteSize, _BoxGeometry->_VPosBufferCPU.put()));
+    CopyMemory(_BoxGeometry->_VPosBufferCPU->GetBufferPointer(), vertices.data(), vPosByteSize);
+
+    winrt::check_hresult(D3DCreateBlob(vColorByteSize, _BoxGeometry->_VColorBufferCPU.put()));
+    CopyMemory(_BoxGeometry->_VColorBufferCPU->GetBufferPointer(), vertices.data(), vColorByteSize);
 
     winrt::check_hresult(D3DCreateBlob(indexByteSize, _BoxGeometry->_IndexBufferCPU.put()));
     CopyMemory(_BoxGeometry->_IndexBufferCPU->GetBufferPointer(), indices.data(), indexByteSize);
 
-    _BoxGeometry->_VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
-        _Device, _CommandList, vertices.data(), verticeByteSize, _BoxGeometry->_VertexBufferUploader);
+    _BoxGeometry->_VPosBufferGPU = d3dUtil::CreateDefaultBuffer(
+        _Device, _CommandList, vertices.data(), vPosByteSize, _BoxGeometry->_VPosBufferUploader);
+
+    _BoxGeometry->_VColorBufferGPU = d3dUtil::CreateDefaultBuffer(
+        _Device, _CommandList, colors.data(), vColorByteSize, _BoxGeometry->_VColorBufferUploader);
 
     _BoxGeometry->_IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
         _Device, _CommandList, indices.data(), indexByteSize, _BoxGeometry->_IndexBufferUploader);
 
-    _BoxGeometry->_VertexByteStride = sizeof(Vertex);
-    _BoxGeometry->_VertexBufferByteSize = verticeByteSize;
+    _BoxGeometry->_VPosByteStride = sizeof(VPosData);
+    _BoxGeometry->_VPosBufferByteSize = vPosByteSize;
+    _BoxGeometry->_VColorByteStride = sizeof(VColorData);
+    _BoxGeometry->_VColorBufferByteSize = vColorByteSize;
     _BoxGeometry->_IndexFormat = DXGI_FORMAT_R16_UINT;
     _BoxGeometry->_IndexBufferByteSize = indexByteSize;
 

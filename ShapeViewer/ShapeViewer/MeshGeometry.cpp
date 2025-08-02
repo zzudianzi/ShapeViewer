@@ -1,12 +1,20 @@
 #include "pch.h"
 #include "MeshGeometry.h"
 
-D3D12_VERTEX_BUFFER_VIEW MeshGeometry::VertexBufferView() const
+D3D12_VERTEX_BUFFER_VIEW MeshGeometry::VPosBufferView() const
 {
     return {
-        .BufferLocation = _VertexBufferGPU->GetGPUVirtualAddress(),
-        .SizeInBytes = _VertexBufferByteSize,
-        .StrideInBytes = _VertexByteStride};
+        .BufferLocation = _VPosBufferGPU->GetGPUVirtualAddress(),
+        .SizeInBytes = _VPosBufferByteSize,
+        .StrideInBytes = _VPosByteStride};
+}
+
+D3D12_VERTEX_BUFFER_VIEW MeshGeometry::VColorBufferView() const
+{
+    return {
+        .BufferLocation = _VColorBufferGPU->GetGPUVirtualAddress(),
+        .SizeInBytes = _VColorBufferByteSize,
+        .StrideInBytes = _VColorByteStride};
 }
 
 D3D12_INDEX_BUFFER_VIEW MeshGeometry::IndexBufferView() const
@@ -19,6 +27,7 @@ D3D12_INDEX_BUFFER_VIEW MeshGeometry::IndexBufferView() const
 
 void MeshGeometry::DisposeUploaders()
 {
-    _VertexBufferUploader = nullptr;
+    _VPosBufferUploader = nullptr;
+    _VColorBufferUploader = nullptr;
     _IndexBufferUploader = nullptr;
 }
