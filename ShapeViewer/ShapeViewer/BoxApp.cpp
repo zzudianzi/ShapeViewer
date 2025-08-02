@@ -121,7 +121,7 @@ void BoxApp::Draw()
         _CommandList->IASetVertexBuffers(0, 1, &vPosBufferView);
         _CommandList->IASetVertexBuffers(1, 1, &vColorBufferView);
         _CommandList->IASetIndexBuffer(&indexBufferView);
-        _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+        _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
         _CommandList->SetGraphicsRootDescriptorTable(0, _CBVHeap->GetGPUDescriptorHandleForHeapStart());
 
@@ -272,18 +272,18 @@ void BoxApp::BuildShaderAndInputLayout()
 void BoxApp::BuildBoxGeometry()
 {
     std::array<VPosData, 8> vertices = {
-        VPosData({XMFLOAT3(-1.0f, -1.0f, -1.0f)}),
-        VPosData({XMFLOAT3(-1.0f, +1.0f, -1.0f)}),
-        VPosData({XMFLOAT3(+1.0f, +1.0f, -1.0f)}),
-        VPosData({XMFLOAT3(+1.0f, -1.0f, -1.0f)}),
-        VPosData({XMFLOAT3(-1.0f, -1.0f, +1.0f)}),
-        VPosData({XMFLOAT3(-1.0f, +1.0f, +1.0f)}),
-        VPosData({XMFLOAT3(+1.0f, +1.0f, +1.0f)}),
-        VPosData({XMFLOAT3(+1.0f, -1.0f, +1.0f)})};
+        VPosData({XMFLOAT3(-2.0f, -1.0f, 0)}),
+        VPosData({XMFLOAT3(-1.5f, 0.75f, 0)}),
+        VPosData({XMFLOAT3(-1.f, -0.5f, 0)}),
+        VPosData({XMFLOAT3(-0.5f, 0.25f, 0)}),
+        VPosData({XMFLOAT3(0.f, 0.f, 0)}),
+        VPosData({XMFLOAT3(0.5f, 0.25f, 0)}),
+        VPosData({XMFLOAT3(1.f, 0.1f, 0)}),
+        VPosData({XMFLOAT3(1.5f, 1.f, 0)})};
 
     std::array<VColorData, 8> colors = {
         XMFLOAT4(Colors::White),
-        XMFLOAT4(Colors::Black),
+        XMFLOAT4(Colors::White),
         XMFLOAT4(Colors::Red),
         XMFLOAT4(Colors::Green),
         XMFLOAT4(Colors::Blue),
@@ -296,20 +296,8 @@ void BoxApp::BuildBoxGeometry()
         color._Color.w = 0.1f;
     }
 
-    std::array<std::uint16_t, 24> indices = 
-    {   0, 1,
-        1, 2,
-        2, 3,
-        3, 0,
-        4, 5,
-        5, 6,
-        6, 7,
-        7, 4,
-        0, 4,
-        1, 5,
-        2, 6,
-        3, 7
-	};
+    std::array<std::uint16_t, 26> indices = {0, 1, 0, 2, 1, 2, 1, 3, 2, 3, 2, 4, 4,
+                                            3, 3, 5, 4, 5, 4, 6, 5, 6, 5, 7, 6, 7};
 
     const UINT vPosByteSize = static_cast<UINT>(vertices.size() * sizeof(VPosData));
     const UINT vColorByteSize = static_cast<UINT>(colors.size() * sizeof(VColorData));
@@ -365,7 +353,7 @@ void BoxApp::BuildPSO()
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
     psoDesc.SampleMask = UINT_MAX;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = _BackBufferFormat;
     psoDesc.SampleDesc.Count = _m4xMsaaState ? 4 : 1;
