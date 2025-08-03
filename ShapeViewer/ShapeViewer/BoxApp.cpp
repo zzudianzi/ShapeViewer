@@ -271,33 +271,33 @@ void BoxApp::BuildShaderAndInputLayout()
 
 void BoxApp::BuildBoxGeometry()
 {
-    std::array<VPosData, 8> vertices = {
-        VPosData({XMFLOAT3(-2.0f, -1.0f, 0)}),
-        VPosData({XMFLOAT3(-1.5f, 0.75f, 0)}),
-        VPosData({XMFLOAT3(-1.f, -0.5f, 0)}),
-        VPosData({XMFLOAT3(-0.5f, 0.25f, 0)}),
-        VPosData({XMFLOAT3(0.f, 0.f, 0)}),
-        VPosData({XMFLOAT3(0.5f, 0.25f, 0)}),
-        VPosData({XMFLOAT3(1.f, 0.1f, 0)}),
-        VPosData({XMFLOAT3(1.5f, 1.f, 0)})};
+    std::array<VPosData, 5> vertices = {
+        VPosData({XMFLOAT3(-1.0f, -0.75f, 0)}),
+        VPosData({XMFLOAT3(0.75f, -1.f, 0)}),
+        VPosData({XMFLOAT3(1.f, 0.75f, 0)}),
+        VPosData({XMFLOAT3(-0.25f, 1.f, 0)}),
+        VPosData({XMFLOAT3(0., 0., 2.f)})};
 
-    std::array<VColorData, 8> colors = {
-        XMFLOAT4(Colors::White),
-        XMFLOAT4(Colors::White),
-        XMFLOAT4(Colors::Red),
+    std::array<VColorData, 5> colors = {
         XMFLOAT4(Colors::Green),
-        XMFLOAT4(Colors::Blue),
-        XMFLOAT4(Colors::Yellow),
-        XMFLOAT4(Colors::Cyan),
-        XMFLOAT4(Colors::Magenta)};
+        XMFLOAT4(Colors::Green),
+        XMFLOAT4(Colors::Green),
+        XMFLOAT4(Colors::Green),
+        XMFLOAT4(Colors::Red)};
 
     for (auto&& color : colors)
     {
         color._Color.w = 0.1f;
     }
 
-    std::array<std::uint16_t, 26> indices = {0, 1, 0, 2, 1, 2, 1, 3, 2, 3, 2, 4, 4,
-                                            3, 3, 5, 4, 5, 4, 6, 5, 6, 5, 7, 6, 7};
+    std::array<std::uint16_t, 18> indices = {
+        0, 1, 2,
+        0, 2, 3,
+        4, 0, 1,
+        4, 0, 3,
+        4, 1, 2,
+        4, 2, 3
+    };
 
     const UINT vPosByteSize = static_cast<UINT>(vertices.size() * sizeof(VPosData));
     const UINT vColorByteSize = static_cast<UINT>(colors.size() * sizeof(VColorData));
