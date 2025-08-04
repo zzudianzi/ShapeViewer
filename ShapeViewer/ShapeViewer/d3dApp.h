@@ -59,6 +59,8 @@ class D3DApp
     bool Show3D() const;
     void Show3D(bool value);
 
+    GameTimer& Timer();
+
   protected:
     void CreateCommandObjects();
     void CreateSwapChain();
@@ -114,6 +116,8 @@ class D3DApp
 
     bool _Draw2D;
     bool _Draw3D;
+
+    GameTimer _Timer;
 };
 
 } // namespace ShapeViewer

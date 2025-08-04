@@ -4,15 +4,11 @@
 #include "MathHelper.h"
 #include "Light.h"
 
-struct Vertex
-{
-    DirectX::XMFLOAT3 _Pos;
-    DirectX::XMFLOAT4 _Color;
-};
-
 struct ObjectConstants
 {
     DirectX::XMFLOAT4X4 _WorldViewProj = MathHelper::Identity4x4();
+    DirectX::XMFLOAT4 _PulseColor;
+    float _Time;
 };
 
 struct PassConstants

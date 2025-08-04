@@ -53,8 +53,6 @@ MainWindow::~MainWindow() = default;
 void MainWindow::InitializeComponent()
 {
     MainWindowT::InitializeComponent();
-
-    _Timer.Reset();
 }
 
 winrt::ShapeViewer::MainWindowViewModel MainWindow::ViewModel()
@@ -69,7 +67,7 @@ void MainWindow::CalculateFrameStats()
 
     frameCount++;
 
-    if ((_Timer.TotalTimeInSeconds() - timeEplapsed) >= 1.)
+    if ((_d3dApp->Timer().TotalTimeInSeconds() - timeEplapsed) >= 1.)
     {
         double fps = frameCount;
         double mspf = 1000. / fps;
@@ -79,7 +77,7 @@ void MainWindow::CalculateFrameStats()
 
         std::wstring windowText = L"ShapeViwer....fps: " + fpsStr + L"   mspf: " + mspfStr;
 
-        // Title(windowText.c_str());
+        Title(windowText.c_str());
 
         frameCount = 0;
         timeEplapsed += 1.;
@@ -104,6 +102,7 @@ void MainWindow::swapChainPanel_Loaded(IInspectable const& sender, RoutedEventAr
     mainViewModel->App(_d3dApp.get());
 
     _RenderingToken = CompositionTarget::Rendering({this, &MainWindow::swapChainPanel_RenderingHandler});
+    _d3dApp->Timer().Reset();
 }
 
 void MainWindow::swapChainPanel_Unloaded(IInspectable const& sender, RoutedEventArgs const& e)
@@ -203,13 +202,19 @@ void MainWindow::Window_Activated(IInspectable const& sender, WindowActivatedEve
 {
     if (args.WindowActivationState() == WindowActivationState::Deactivated)
     {
-        _Timer.Stop();
+        if (_d3dApp)
+        {
+            _d3dApp->Timer().Stop();
+        }
     }
     else if (
         args.WindowActivationState() == WindowActivationState::PointerActivated ||
         args.WindowActivationState() == WindowActivationState::CodeActivated)
     {
-        _Timer.Start();
+        if (_d3dApp)
+        {
+            _d3dApp->Timer().Start();
+        }
     }
 }
 

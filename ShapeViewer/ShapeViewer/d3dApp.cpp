@@ -333,3 +333,8 @@ void D3DApp::Show3D(bool value)
 {
     _Draw3D = value;
 }
+
+GameTimer& D3DApp::Timer()
+{
+    return _Timer;
+}

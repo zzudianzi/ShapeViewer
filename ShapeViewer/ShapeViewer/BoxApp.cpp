@@ -10,6 +10,15 @@
 using namespace DirectX;
 using namespace ShapeViewer;
 
+namespace
+{
+struct Vertex
+{
+    DirectX::XMFLOAT3 _Pos;
+    DirectX::XMFLOAT4 _Color;
+};
+}
+
 BoxApp::BoxApp(winrt::com_ptr<ISwapChainPanelNative> panelNative) : D3DApp(panelNative)
 {
 }
@@ -51,6 +60,7 @@ void BoxApp::OnResize(float width, float height)
 
 void BoxApp::Update()
 {
+    _Timer.Tick();
     // Convert Spherical to Cartesian coordinates.
     float x = _Radius * sin(_Phi) * cos(_Theta);
     float y = _Radius * cos(_Phi);
@@ -71,6 +81,8 @@ void BoxApp::Update()
     // Update the constant buffer with the latest worldViewProj matrix.
     ObjectConstants objConstants;
     XMStoreFloat4x4(&objConstants._WorldViewProj, XMMatrixTranspose(worldViewProj));
+    XMStoreFloat4(&objConstants._PulseColor, DirectX::Colors::AliceBlue);
+    objConstants._Time = static_cast<float>(_Timer.TotalTimeInSeconds());
     _ObjectCB->CopyData(0, objConstants);
 }
 
@@ -106,7 +118,7 @@ void BoxApp::Draw()
         auto indexBufferView = _BoxGeometry->IndexBufferView();
         _CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
         _CommandList->IASetIndexBuffer(&indexBufferView);
-        _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+        _CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         _CommandList->SetGraphicsRootDescriptorTable(0, _CBVHeap->GetGPUDescriptorHandleForHeapStart());
 
@@ -250,41 +262,54 @@ void BoxApp::BuildShaderAndInputLayout()
     _PSByteCode = d3dUtil::CompileShader(path, nullptr, "PS", "ps_5_0");
 
     _InputLayout = {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 }
 
 void BoxApp::BuildBoxGeometry()
 {
-    std::array<Vertex, 8> vertices = {
-        Vertex({XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White)}),
-        Vertex({XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black)}),
-        Vertex({XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red)}),
-        Vertex({XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green)}),
-        Vertex({XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue)}),
-        Vertex({XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow)}),
-        Vertex({XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan)}),
-        Vertex({XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta)})};
+    std::array<Vertex, 8> vertices =
+    {
+        Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) }),
+		Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) }),
+		Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red) }),
+		Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green) }),
+		Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue) }),
+		Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow) }),
+		Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan) }),
+		Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) })
+    };
 
-    for (auto&& vertex : vertices)
+    for (auto& vertex : vertices)
     {
         vertex._Color.w = 0.1f;
     }
 
-	std::array<std::uint16_t, 24> indices =
+	std::array<std::uint16_t, 36> indices =
 	{
-		0, 1,
-        1, 2,
-        2, 3,
-        3, 0,
-        4, 5,
-        5, 6,
-        6, 7,
-        7, 4,
-        0, 4,
-        1, 5,
-        2, 6,
-        3, 7
+		// front face
+		0, 1, 2,
+		0, 2, 3,
+
+		// back face
+		4, 6, 5,
+		4, 7, 6,
+
+		// left face
+		4, 5, 1,
+		4, 1, 0,
+
+		// right face
+		3, 2, 6,
+		3, 6, 7,
+
+		// top face
+		1, 5, 6,
+		1, 6, 2,
+
+		// bottom face
+		4, 0, 3,
+		4, 3, 7
 	};
 
     const UINT verticeByteSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
@@ -328,11 +353,12 @@ void BoxApp::BuildPSO()
     psoDesc.VS = {reinterpret_cast<BYTE*>(_VSByteCode->GetBufferPointer()), _VSByteCode->GetBufferSize()};
     psoDesc.PS = {reinterpret_cast<BYTE*>(_PSByteCode->GetBufferPointer()), _PSByteCode->GetBufferSize()};
     psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-    psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+    psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+    psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
     psoDesc.SampleMask = UINT_MAX;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = _BackBufferFormat;
     psoDesc.SampleDesc.Count = _m4xMsaaState ? 4 : 1;

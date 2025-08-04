@@ -3,7 +3,6 @@
 #include "MainWindow.g.h"
 
 #include "d3dApp.h"
-#include "GameTimer.h"
 #include "VisText.h"
 
 namespace winrt::ShapeViewer::implementation
@@ -22,7 +21,6 @@ struct MainWindow : MainWindowT<MainWindow>
   private:
     std::unique_ptr<::ShapeViewer::D3DApp> _d3dApp;
     winrt::event_token _RenderingToken;
-    GameTimer _Timer;
 
     winrt::hstring _WindowTitle;
 
